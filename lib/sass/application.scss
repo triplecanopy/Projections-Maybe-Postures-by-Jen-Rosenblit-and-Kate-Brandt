@@ -1,2 +1,14 @@
 
-body{display: flex;}
+
+// grid
+
+$cols: 18;
+$image-width: (11 / $cols) * 100%;
+$video-width: (15 / $cols) * 100%;
+
+body {display: flex}
+
+// video { width: $video-width; height: auto; }
+// img { width: $image-width; height: auto; }
+
+

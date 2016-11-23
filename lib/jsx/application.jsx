@@ -1,3 +1,4 @@
 
+import $ from 'jquery'
 
-[1,2,3].map(_ => console.log(_))
+console.log($)

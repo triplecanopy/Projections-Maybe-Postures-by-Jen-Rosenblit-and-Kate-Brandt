@@ -11,7 +11,7 @@
     "ava": "npm run build && ava --verbose || true",
     "lint": "./node_modules/.bin/eslint ./*.jsx || true",
     "test": "npm run ava && npm run lint",
-    "build": "babel --presets es2015,stage-0 ./lib/jsx/application.jsx -o ./javascripts/application.js"
+    "build": "gulp build"
   },
   "dependencies": {
     "ejs": "2.4.1",
@@ -31,17 +31,23 @@
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-stage-0": "^6.16.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.1",
+    "ejs": "^2.4.1",
     "eslint": "^3.10.2",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-babel": "^4.0.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.7.1",
+    "express": "^4.13.3",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",
     "gulp-cssnano": "^2.1.2",
+    "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.2",
     "gulp-uglify": "^2.0.0",
+    "jquery": "^3.1.1",
     "path": "^0.12.7"
   }
 }
