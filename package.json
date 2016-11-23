@@ -10,17 +10,16 @@
     "start": "node index.js",
     "ava": "npm run build && ava --verbose || true",
     "lint": "./node_modules/.bin/eslint ./lib/jsx/*.jsx || true",
-    "test": "npm run ava && npm run lint",
-    "build": "gulp build"
+    "test": "npm run ava && npm run lint"
   },
   "dependencies": {
-    "ejs": "2.4.1",
-    "express": "4.13.3",
+    "ejs": "^2.4.1",
+    "express": "^4.13.3",
     "jquery": "^3.1.1"
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://msimmer@bitbucket.org/msimmer/rosenblit.git"
   },
   "license": "MIT",
   "author": "Maxwell Simmer (http://maxwell.simmer.com)",
@@ -34,20 +33,17 @@
     "babel-preset-stage-0": "^6.16.0",
     "babelify": "^7.3.0",
     "browserify": "^13.1.1",
-    "ejs": "^2.4.1",
     "eslint": "^3.10.2",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-babel": "^4.0.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.7.1",
-    "express": "^4.13.3",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",
     "gulp-cssnano": "^2.1.2",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.2",
-    "gulp-uglify": "^2.0.0",
-    "path": "^0.12.7"
+    "gulp-uglify": "^2.0.0"
   }
 }
