@@ -1,14 +1,44 @@
 
+// $cols: 18;
+// $image-width: (11 / $cols) * 100%;
+// $video-width: (15 / $cols) * 100%;
 
-// grid
+@import 'reset';
 
-$cols: 18;
-$image-width: (11 / $cols) * 100%;
-$video-width: (15 / $cols) * 100%;
+@mixin background-element {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
 
-body {display: flex}
+@mixin full-height-full-width {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
 
-// video { width: $video-width; height: auto; }
-// img { width: $image-width; height: auto; }
+body { background-color: gainsboro; }
 
-
+.media {
+  position: absolute;
+  background-color: #fff;
+  &__container {
+    display: none;
+    @include full-height-full-width;
+    &--image {
+      @include background-element;
+      @include full-height-full-width;
+    }
+    &--video {
+      @include background-element;
+      @include full-height-full-width;
+      video { height: 100%; width: 100%; }
+    }
+    &--audio {
+      position: fixed;
+    }
+  }
+}

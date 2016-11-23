@@ -9,20 +9,21 @@
   "scripts": {
     "start": "node index.js",
     "ava": "npm run build && ava --verbose || true",
-    "lint": "./node_modules/.bin/eslint ./*.jsx || true",
+    "lint": "./node_modules/.bin/eslint ./lib/jsx/*.jsx || true",
     "test": "npm run ava && npm run lint",
     "build": "gulp build"
   },
   "dependencies": {
     "ejs": "2.4.1",
-    "express": "4.13.3"
+    "express": "4.13.3",
+    "jquery": "^3.1.1"
   },
   "repository": {
     "type": "git",
     "url": ""
   },
   "license": "MIT",
-  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwell.simmer.com)",
+  "author": "Maxwell Simmer (http://maxwell.simmer.com)",
   "devDependencies": {
     "ava": "^0.17.0",
     "babel-cli": "^6.18.0",
@@ -47,7 +48,6 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.2",
     "gulp-uglify": "^2.0.0",
-    "jquery": "^3.1.1",
     "path": "^0.12.7"
   }
 }

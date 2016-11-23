@@ -35,7 +35,7 @@ gulp.task('styles', ['sass'], function () {
 gulp.task('minify', ['styles'], function () {
   return gulp.src('./public/' + rev + '.css')
   .pipe(cssmin({ keepSpecialComments: 0 }))
-  .pipe(gulp.dest('./'))
+  .pipe(gulp.dest('./public'))
 })
 
 gulp.task('uglify', ['scripts'], function () {
