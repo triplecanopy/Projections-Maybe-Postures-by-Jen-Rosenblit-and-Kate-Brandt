@@ -9,7 +9,7 @@ var rename = require('gulp-rename')
 var exec = require('child_process').exec
 var fs = require('fs')
 
-var rev = 'application'
+var rev = 'fe07572b7c5df5f1b5c4f5e15eafccd7'
 
 gulp.task('scripts', function () {
   return exec('browserify ./lib/jsx/application.jsx -o ./public/' + rev + '.js -t [ babelify --presets [ es2015 ] ]', { cwd: './' }, (function(err) {
@@ -73,8 +73,7 @@ function guid() {
 
 gulp.task('revision', function() {
   var prev = rev
-  var uuid = 'application'
-  // var uuid = guid()
+  var uuid = guid()
   var regex = new RegExp(rev, 'g')
   var files = [
     path.join(__dirname, 'views/pages/index.ejs'),
