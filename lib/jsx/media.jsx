@@ -60,12 +60,12 @@ class Media {
       }
     }
     this.models = {
-      image: `<div class="media">
+      image: `<div class="media media__image">
         <div class="media__container">
           <div class="media__container--image" style="background-image:url(/ASSET_URL.jpg)"></div>
         </div>
       </div>`,
-      video: `<div class="media">
+      video: `<div class="media media__video">
         <div class="media__container">
           <div class="media__container--video">
             <video>
@@ -76,10 +76,10 @@ class Media {
           </div>
         </div>
       </div>`,
-      audio: `<div class="media">
+      audio: `<div class="media media__audio">
         <div class="media__container">
           <div class="media__container--audio">
-            <audio autoplay>
+            <audio>
                <source src="/ASSET_URL.ogg">
                <source src="/ASSET_URL.mp3">
             </audio>
@@ -108,7 +108,20 @@ class Media {
           elem.find('.media__container').fadeOut(this.settings.fadeSpeed, () => this.cycle())
         }, false)
       },
-      audio: () => console.log('audio decay')
+      audio: (elem) => {
+        const audio = elem.find('audio')[0]
+        const audioId = `_${Math.round(Math.random() * 1000000)}`
+        $('.media__controls').fadeIn(this.settings.fadeSpeed)
+        $('.media__button').addClass('pause').removeClass('play').attr('data-play-pause', audioId)
+        audio.id = audioId
+        audio.addEventListener('canplay', () => {
+          audio.play()
+        }, false)
+        audio.addEventListener('ended', () => {
+          $('.media__controls').fadeOut(this.settings.fadeSpeed)
+          elem.find('.media__container').fadeOut(this.settings.fadeSpeed, () => this.cycle())
+        }, false)
+      }
     }
     this.ratio = {
       image: { x: 55, y: 31, p: 11 / this.settings.columns },
@@ -186,11 +199,32 @@ class Media {
     const key = this.randomKey(0, this.assets.length - 1)
     const asset = this.assets[key]
     return this.limit(asset.type) ? this.cycle() : this.show(asset)
-    this.show(asset)
   }
 
   addURLs(data) {
     this._set('assets', data)
+    this.bindAll()
+  }
+
+  bindAll() {
+    $('.media__button').on('click', function bindAudio() {
+      const audio = $(`audio#${$(this).attr('data-play-pause')}`)[0]
+      if (audio.paused) {
+        $(this).addClass('pause')
+        $(this).removeClass('play')
+        audio.play()
+      } else {
+        $(this).removeClass('pause')
+        $(this).addClass('play')
+        audio.pause()
+      }
+    })
+
+    $('audio').on('play', function pauseAudio() {
+      const $button = $(`[data-play-pause='${$(this).attr('id')}']`)
+      $button.removeClass('play').addClass('pause')
+    })
+
     this.init()
   }
 

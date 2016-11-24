@@ -21,8 +21,8 @@ app.get('/api/media', function(req, res) {
       switch (path.extname(file)) {
         case '.jpg':
           return { type: 'image', url: path.basename(file, '.jpg') }
-        // case '.ogg':
-        //   return { type: 'audio', url: path.basename(file, '.ogg') }
+        case '.ogg':
+          return { type: 'audio', url: path.basename(file, '.ogg') }
         case '.webm':
           return { type: 'video', url: path.basename(file, '.webm') }
         default:

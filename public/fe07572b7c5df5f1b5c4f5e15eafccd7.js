@@ -128,9 +128,9 @@ var Media = function () {
       }
     };
     this.models = {
-      image: '<div class="media">\n        <div class="media__container">\n          <div class="media__container--image" style="background-image:url(/ASSET_URL.jpg)"></div>\n        </div>\n      </div>',
-      video: '<div class="media">\n        <div class="media__container">\n          <div class="media__container--video">\n            <video>\n              <source src="/ASSET_URL.webm" type="video/webm">\n              <source src="/ASSET_URL.mp4" type="video/mp4">\n              <source src="/ASSET_URL.ogv" type="video/ogg">\n          </video>\n          </div>\n        </div>\n      </div>',
-      audio: '<div class="media">\n        <div class="media__container">\n          <div class="media__container--audio">\n            <audio autoplay>\n               <source src="/ASSET_URL.ogg">\n               <source src="/ASSET_URL.mp3">\n            </audio>\n          </div>\n        </div>\n      </div>'
+      image: '<div class="media media__image">\n        <div class="media__container">\n          <div class="media__container--image" style="background-image:url(/ASSET_URL.jpg)"></div>\n        </div>\n      </div>',
+      video: '<div class="media media__video">\n        <div class="media__container">\n          <div class="media__container--video">\n            <video>\n              <source src="/ASSET_URL.webm" type="video/webm">\n              <source src="/ASSET_URL.mp4" type="video/mp4">\n              <source src="/ASSET_URL.ogv" type="video/ogg">\n          </video>\n          </div>\n        </div>\n      </div>',
+      audio: '<div class="media media__audio">\n        <div class="media__container">\n          <div class="media__container--audio">\n            <audio>\n               <source src="/ASSET_URL.ogg">\n               <source src="/ASSET_URL.mp3">\n            </audio>\n          </div>\n        </div>\n      </div>'
     };
     this.decay = {
       image: function image(elem) {
@@ -157,8 +157,21 @@ var Media = function () {
           });
         }, false);
       },
-      audio: function audio() {
-        return console.log('audio decay');
+      audio: function audio(elem) {
+        var audio = elem.find('audio')[0];
+        var audioId = '_' + Math.round(Math.random() * 1000000);
+        (0, _jquery2.default)('.media__controls').fadeIn(_this2.settings.fadeSpeed);
+        (0, _jquery2.default)('.media__button').addClass('pause').removeClass('play').attr('data-play-pause', audioId);
+        audio.id = audioId;
+        audio.addEventListener('canplay', function () {
+          audio.play();
+        }, false);
+        audio.addEventListener('ended', function () {
+          (0, _jquery2.default)('.media__controls').fadeOut(_this2.settings.fadeSpeed);
+          elem.find('.media__container').fadeOut(_this2.settings.fadeSpeed, function () {
+            return _this2.cycle();
+          });
+        }, false);
       }
     };
     this.ratio = {
@@ -254,6 +267,29 @@ var Media = function () {
     key: 'addURLs',
     value: function addURLs(data) {
       this._set('assets', data);
+      this.bindAll();
+    }
+  }, {
+    key: 'bindAll',
+    value: function bindAll() {
+      (0, _jquery2.default)('.media__button').on('click', function (e) {
+        var audio = (0, _jquery2.default)("audio#" + (0, _jquery2.default)(this).attr('data-play-pause'))[0];
+        if (audio.paused) {
+          (0, _jquery2.default)(this).addClass('pause');
+          (0, _jquery2.default)(this).removeClass('play');
+          return audio.play();
+        } else {
+          (0, _jquery2.default)(this).removeClass('pause');
+          (0, _jquery2.default)(this).addClass('play');
+          return audio.pause();
+        }
+      });
+
+      (0, _jquery2.default)('audio').on('play', function () {
+        var $button = (0, _jquery2.default)("[data-play-pause='" + (0, _jquery2.default)(this).attr('id') + "']");
+        $button.removeClass('play').addClass('pause');
+      });
+
       this.init();
     }
   }, {

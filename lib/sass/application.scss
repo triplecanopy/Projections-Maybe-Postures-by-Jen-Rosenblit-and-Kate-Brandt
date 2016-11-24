@@ -3,8 +3,12 @@
 // $image-width: (11 / $cols) * 100%;
 // $video-width: (15 / $cols) * 100%;
 
+@import 'fonts';
 @import 'reset';
 @import 'grid';
+
+$black: #222;
+$white: #fff;
 
 @mixin background-element {
   background-color: transparent;
@@ -26,7 +30,7 @@ body { background-color: gainsboro; }
 
 .media {
   position: absolute;
-  background-color: #fff;
+  background-color: $white;
   &__container {
     display: none;
     @include full-height-full-width;
@@ -40,7 +44,50 @@ body { background-color: gainsboro; }
       video { height: 100%; width: 100%; }
     }
     &--audio {
-      position: fixed;
+      audio { display: none; }
     }
+  }
+  &__audio { background-color: transparent; }
+}
+
+.media__controls {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  .media__button {
+    cursor: pointer;
+    font-family: 'EntypoRegular';
+    font-size: 2em;
+    font-weight: normal;
+    line-height: 0;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    display: block;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid $black;
+    width: 48px;
+    height: 48px;
+    background-color: transparent;
+    position: fixed;
+    top: calc( 50% - 24px );
+    left: calc( 50% - 24px );
+
+    &:before {
+      color: $black;
+      display: block;
+      line-height: 1.5;
+      height: 100%;
+      width: 100%;
+      text-align: center;
+    }
+
+    &.play:before{ content:'\25B6' }
+    &.pause:before{ content:'\2016' }
   }
 }

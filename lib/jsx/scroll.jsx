@@ -4,16 +4,20 @@
 import $ from 'jquery'
 
 class Scroll {
-  constructor() {
-    let pos = 0
-    let elemH = $('html').height()
-    $(window).on('scroll', (e) => {
-      if ($(window).scrollTop() > pos) {
-        pos = $(window).scrollTop()
-        $('html').height(elemH + pos)
-      }
-    })
-    $(window).scroll()
+  constructor(options) {
+    this.settings = {}
+    Object.assign(this.settings, options)
+    this.init = function init() {
+      const elemH = $('html').height()
+      let pos = 0
+      $(window).on('scroll', () => {
+        if ($(window).scrollTop() > pos) {
+          pos = $(window).scrollTop()
+          $('html').height(elemH + pos)
+        }
+      })
+      $(window).scroll()
+    }
   }
 }
 

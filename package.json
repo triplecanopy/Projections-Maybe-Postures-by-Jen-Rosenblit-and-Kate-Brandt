@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "ava": "npm run build && ava --verbose || true",
+    "ava": "ava --verbose || true",
     "lint": "./node_modules/.bin/eslint ./lib/jsx/*.jsx || true",
     "test": "npm run ava && npm run lint"
   },
