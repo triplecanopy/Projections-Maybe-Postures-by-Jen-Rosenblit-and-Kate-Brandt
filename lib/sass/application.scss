@@ -4,6 +4,7 @@
 // $video-width: (15 / $cols) * 100%;
 
 @import 'reset';
+@import 'grid';
 
 @mixin background-element {
   background-color: transparent;
@@ -20,6 +21,7 @@
   right: 0;
 }
 
+html { min-height: 200%; }
 body { background-color: gainsboro; }
 
 .media {

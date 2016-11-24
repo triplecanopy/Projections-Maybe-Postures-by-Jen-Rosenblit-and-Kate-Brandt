@@ -9,6 +9,7 @@ class Media {
       fadeSpeed: 400,
       cycleSpeed: 3000,
       columns: 18,
+      gutter: 2.47469,
       selector: 'main'
     }
 
@@ -33,9 +34,8 @@ class Media {
       image: {
         x: [
           () => 30,
-          () => (4 / this.settings.columns) * $(window).width(),
-          () => (5 / this.settings.columns) * $(window).width(),
-          // () => (7 / this.settings.columns) * $(window).width()
+          () => (4 / this.settings.columns * 2) + (8 * this.settings.gutter / 100) * $(window).width() - 15,
+          () => (5 / this.settings.columns * 2) + (10 * this.settings.gutter / 100) * $(window).width() - 15,
           d => $(window).width() - d.x - 30
         ],
         y: [
@@ -47,7 +47,7 @@ class Media {
       video: {
         x: [
           () => $(window).scrollTop() + 30,
-          () => (3 / this.settings.columns) * $(window).width() - 30
+          () => (3 / this.settings.columns) * $(window).width() - 15
         ],
         y: [
           () => $(window).scrollTop() + 30,
@@ -100,7 +100,10 @@ class Media {
       },
       video: (elem) => {
         const video = elem.find('video')[0]
-        video.addEventListener('canplay', () => { video.play() }, false)
+        video.addEventListener('canplay', () => {
+          video.muted = true
+          video.play()
+        }, false)
         video.addEventListener('ended', () => {
           elem.find('.media__container').fadeOut(this.settings.fadeSpeed, () => this.cycle())
         }, false)
@@ -130,7 +133,7 @@ class Media {
     const x = this.ratio[type].x
     const y = this.ratio[type].y
     const p = this.ratio[type].p
-    return { x: w * p, y: (y / x) * (w * p) }
+    return { x: (w * p) - 15, y: (y / x) * (w * p) }
   }
 
   randomPos(elem, type, d) {

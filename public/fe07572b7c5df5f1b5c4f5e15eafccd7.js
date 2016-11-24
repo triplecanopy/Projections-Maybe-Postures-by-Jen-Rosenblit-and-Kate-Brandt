@@ -20,6 +20,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   media.getAssets().then(function (resp) {
     return media.addURLs(JSON.parse(resp.body));
   });
+  (0, _jquery2.default)(document).on('keyup', function (e) {
+    if (e && e.which && e.which == 71) {
+      (0, _jquery2.default)('.grid').fadeToggle(0);
+    }
+  });
 });
 
 },{"./media.jsx":2,"./scroll.jsx":3,"jquery":46}],2:[function(require,module,exports){
@@ -57,6 +62,7 @@ var Media = function () {
       fadeSpeed: 400,
       cycleSpeed: 3000,
       columns: 18,
+      gutter: 2.47469,
       selector: 'main'
     };
 
@@ -84,12 +90,10 @@ var Media = function () {
         x: [function () {
           return 30;
         }, function () {
-          return 4 / _this2.settings.columns * (0, _jquery2.default)(window).width();
+          return 4 / _this2.settings.columns * 2 + 8 * _this2.settings.gutter / 100 * (0, _jquery2.default)(window).width() - 15;
         }, function () {
-          return 5 / _this2.settings.columns * (0, _jquery2.default)(window).width();
-        },
-        // () => (7 / this.settings.columns) * $(window).width()
-        function (d) {
+          return 5 / _this2.settings.columns * 2 + 10 * _this2.settings.gutter / 100 * (0, _jquery2.default)(window).width() - 15;
+        }, function (d) {
           return (0, _jquery2.default)(window).width() - d.x - 30;
         }],
         y: [function () {
@@ -104,7 +108,7 @@ var Media = function () {
         x: [function () {
           return (0, _jquery2.default)(window).scrollTop() + 30;
         }, function () {
-          return 3 / _this2.settings.columns * (0, _jquery2.default)(window).width() - 30;
+          return 3 / _this2.settings.columns * (0, _jquery2.default)(window).width() - 15;
         }],
         y: [function () {
           return (0, _jquery2.default)(window).scrollTop() + 30;
@@ -143,6 +147,7 @@ var Media = function () {
       video: function video(elem) {
         var video = elem.find('video')[0];
         video.addEventListener('canplay', function () {
+          video.muted = true;
           video.play();
         }, false);
         video.addEventListener('ended', function () {
@@ -182,7 +187,7 @@ var Media = function () {
       var x = this.ratio[type].x;
       var y = this.ratio[type].y;
       var p = this.ratio[type].p;
-      return { x: w * p, y: y / x * (w * p) };
+      return { x: w * p - 15, y: y / x * (w * p) };
     }
   }, {
     key: 'randomPos',
