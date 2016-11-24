@@ -16,17 +16,19 @@ var _scroll2 = _interopRequireDefault(_scroll);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (0, _jquery2.default)(function () {
-  var media = new _media2.default();
   var scroller = new _scroll2.default();
+  var media = new _media2.default();
+  scroller.init();
   media.getAssets().then(function (resp) {
     return media.addURLs(JSON.parse(resp.body));
   });
   (0, _jquery2.default)(document).on('keyup', function (e) {
-    if (e && e.which && e.which == 71) {
+    if (e && e.which && e.which === 71) {
       (0, _jquery2.default)('.grid').fadeToggle(0);
     }
   });
 });
+/* global document:true */
 
 },{"./media.jsx":2,"./scroll.jsx":3,"jquery":46}],2:[function(require,module,exports){
 'use strict';
@@ -261,7 +263,6 @@ var Media = function () {
       var key = this.randomKey(0, this.assets.length - 1);
       var asset = this.assets[key];
       return this.limit(asset.type) ? this.cycle() : this.show(asset);
-      this.show(asset);
     }
   }, {
     key: 'addURLs',
@@ -272,21 +273,21 @@ var Media = function () {
   }, {
     key: 'bindAll',
     value: function bindAll() {
-      (0, _jquery2.default)('.media__button').on('click', function (e) {
-        var audio = (0, _jquery2.default)("audio#" + (0, _jquery2.default)(this).attr('data-play-pause'))[0];
+      (0, _jquery2.default)('.media__button').on('click', function bindAudio() {
+        var audio = (0, _jquery2.default)('audio#' + (0, _jquery2.default)(this).attr('data-play-pause'))[0];
         if (audio.paused) {
           (0, _jquery2.default)(this).addClass('pause');
           (0, _jquery2.default)(this).removeClass('play');
-          return audio.play();
+          audio.play();
         } else {
           (0, _jquery2.default)(this).removeClass('pause');
           (0, _jquery2.default)(this).addClass('play');
-          return audio.pause();
+          audio.pause();
         }
       });
 
-      (0, _jquery2.default)('audio').on('play', function () {
-        var $button = (0, _jquery2.default)("[data-play-pause='" + (0, _jquery2.default)(this).attr('id') + "']");
+      (0, _jquery2.default)('audio').on('play', function pauseAudio() {
+        var $button = (0, _jquery2.default)('[data-play-pause=\'' + (0, _jquery2.default)(this).attr('id') + '\']');
         $button.removeClass('play').addClass('pause');
       });
 
@@ -311,6 +312,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -321,24 +326,28 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Scroll = function Scroll() {
+var Scroll = function Scroll(options) {
   (0, _classCallCheck3.default)(this, Scroll);
 
-  var pos = 0;
-  var elemH = (0, _jquery2.default)('html').height();
-  (0, _jquery2.default)(window).on('scroll', function (e) {
-    if ((0, _jquery2.default)(window).scrollTop() > pos) {
-      pos = (0, _jquery2.default)(window).scrollTop();
-      (0, _jquery2.default)('html').height(elemH + pos);
-    }
-  });
-  (0, _jquery2.default)(window).scroll();
+  this.settings = {};
+  (0, _assign2.default)(this.settings, options);
+  this.init = function init() {
+    var elemH = (0, _jquery2.default)('html').height();
+    var pos = 0;
+    (0, _jquery2.default)(window).on('scroll', function () {
+      if ((0, _jquery2.default)(window).scrollTop() > pos) {
+        pos = (0, _jquery2.default)(window).scrollTop();
+        (0, _jquery2.default)('html').height(elemH + pos);
+      }
+    });
+    (0, _jquery2.default)(window).scroll();
+  };
 };
 /* global window:true */
 
 exports.default = Scroll;
 
-},{"babel-runtime/helpers/classCallCheck":6,"jquery":46}],4:[function(require,module,exports){
+},{"babel-runtime/core-js/object/assign":4,"babel-runtime/helpers/classCallCheck":6,"jquery":46}],4:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/assign"), __esModule: true };
 },{"core-js/library/fn/object/assign":8}],5:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
