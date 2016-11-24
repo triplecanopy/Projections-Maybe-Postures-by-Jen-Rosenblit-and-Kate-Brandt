@@ -17,6 +17,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 (0, _jquery2.default)(function () {
   var media = new _media2.default();
+  var scroller = new _scroll2.default();
   media.getAssets().then(function (resp) {
     return media.addURLs(JSON.parse(resp.body));
   });
@@ -99,9 +100,9 @@ var Media = function () {
         y: [function () {
           return (0, _jquery2.default)(window).scrollTop() + 30;
         }, function (d) {
-          return (0, _jquery2.default)(window).height() / 2 - d.y / 2;
+          return ((0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height()) / 2 - d.y / 2;
         }, function (d) {
-          return (0, _jquery2.default)(window).height() - d.y - 30;
+          return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() - d.y - 30;
         }]
       },
       video: {
@@ -113,9 +114,9 @@ var Media = function () {
         y: [function () {
           return (0, _jquery2.default)(window).scrollTop() + 30;
         }, function (d) {
-          return (0, _jquery2.default)(window).height() / 2 - d.y / 2;
+          return ((0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height()) / 2 - d.y / 2;
         }, function (d) {
-          return (0, _jquery2.default)(window).height() - d.y - 30;
+          return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() - d.y - 30;
         }]
       },
       audio: {
@@ -146,8 +147,8 @@ var Media = function () {
       },
       video: function video(elem) {
         var video = elem.find('video')[0];
+        video.muted = true;
         video.addEventListener('canplay', function () {
-          video.muted = true;
           video.play();
         }, false);
         video.addEventListener('ended', function () {
@@ -286,6 +287,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var Scroll = function Scroll() {
   (0, _classCallCheck3.default)(this, Scroll);
+
+  var pos = 0;
+  var elemH = (0, _jquery2.default)('html').height();
+  (0, _jquery2.default)(window).on('scroll', function (e) {
+    if ((0, _jquery2.default)(window).scrollTop() > pos) {
+      pos = (0, _jquery2.default)(window).scrollTop();
+      (0, _jquery2.default)('html').height(elemH + pos);
+    }
+  });
+  (0, _jquery2.default)(window).scroll();
 };
 /* global window:true */
 

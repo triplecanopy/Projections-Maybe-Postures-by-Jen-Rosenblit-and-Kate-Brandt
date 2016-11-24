@@ -40,8 +40,8 @@ class Media {
         ],
         y: [
           () => $(window).scrollTop() + 30,
-          d => ($(window).height() / 2) - (d.y / 2),
-          d => $(window).height() - d.y - 30
+          d => (($(window).scrollTop() + $(window).height()) / 2) - (d.y / 2),
+          d => ($(window).scrollTop() + $(window).height()) - d.y - 30
         ]
       },
       video: {
@@ -51,8 +51,8 @@ class Media {
         ],
         y: [
           () => $(window).scrollTop() + 30,
-          d => ($(window).height() / 2) - (d.y / 2),
-          d => $(window).height() - d.y - 30
+          d => (($(window).scrollTop() + $(window).height()) / 2) - (d.y / 2),
+          d => ($(window).scrollTop() + $(window).height()) - d.y - 30
         ]
       },
       audio: {
@@ -100,8 +100,8 @@ class Media {
       },
       video: (elem) => {
         const video = elem.find('video')[0]
+        video.muted = true
         video.addEventListener('canplay', () => {
-          video.muted = true
           video.play()
         }, false)
         video.addEventListener('ended', () => {

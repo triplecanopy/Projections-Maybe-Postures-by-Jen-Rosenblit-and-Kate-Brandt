@@ -5,6 +5,7 @@ import Scroll from './scroll.jsx'
 
 $(() => {
   const media = new Media()
+  const scroller = new Scroll()
   media.getAssets()
   .then(resp => media.addURLs(JSON.parse(resp.body)))
   $(document).on('keyup', e => {
