@@ -1,5 +1,7 @@
 
-/* global window:true */
+/* global window:true, Image:true */
+/* eslint-disable no-mixed-operators */
+
 
 import $ from 'jquery'
 
@@ -21,21 +23,21 @@ class Media {
       return $.get('/api/media', resp => resp)
     }
 
-    // tmp -- the next two will change when a different sequence is figured out
-    this.imageCount = 0
-    this.minimumImages = 4
-
     this.timer = null
-    this.previousType = null
-    this.assets = {}
+    this.assets = [
+      [], // images
+      [], // audio
+      [] // video
+    ]
+    this.dict = []
 
     this.main = $(this.settings.selector)
     this.positions = {
       image: {
         x: [
           () => 30,
-          () => (4 / this.settings.columns * 2) + (8 * this.settings.gutter / 100) * $(window).width() - 15,
-          () => (5 / this.settings.columns * 2) + (10 * this.settings.gutter / 100) * $(window).width() - 15,
+          () => (4 / this.settings.columns * 2) + (8 * this.settings.gutter / 100) * $(window).width() - 15, // eslint-disable-line max-len
+          () => (5 / this.settings.columns * 2) + (10 * this.settings.gutter / 100) * $(window).width() - 15, // eslint-disable-line max-len
           d => $(window).width() - d.x - 30
         ],
         y: [
@@ -175,8 +177,6 @@ class Media {
   }
 
   show(asset) {
-    this._set('previousType', asset.type)
-
     // create element
     const elem = this.createElement(asset.type, asset.url)
 
@@ -185,29 +185,56 @@ class Media {
     this.decay[asset.type](elem)
   }
 
-  limit(type) { // need to figure out a good way to sequence these
-    let res
-    // if (this.limit[type].push(type) > this.allowedRunOf(type)) {
-    this.imageCount += 1
-    if (this.imageCount < this.minimumImages) {
-      res = false
-    } else {
-      res = true
-      this.imageCount = 0
-    }
-    return res
-  }
-
   cycle() {
-    // get asset index
-    const key = this.randomKey(0, this.assets.length - 1)
-    const asset = this.assets[key]
-    return this.limit(asset.type) ? this.cycle() : this.show(asset)
+    const type = this.dict[this.randomKey(0, this.dict.length - 1)]
+    const asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)]
+
+    console.log(type, asset)
+
+    return this.show(asset)
   }
 
-  addURLs(data) {
-    this._set('assets', data)
-    this.bindAll()
+  preloadImages() {
+    return new Promise((resolve/* , reject */) => {
+      const images = this.assets[0]
+      return images.map((image, i) => {
+        const img = new Image()
+        img.onload = () => {
+          if (i === images.length - 1) { resolve() }
+        }
+        img.src = `${image.url}.jpg`
+        return img
+      })
+    })
+  }
+
+  determineProbability() {
+    const assetLength = this.assets.reduce((a, b) => a.concat(b)).length
+
+    const imagePct = Math.round((7 / assetLength) * 100)
+    const audioPct = Math.round((1 / assetLength) * 100)
+    const videoPct = Math.round((2 / assetLength) * 100)
+
+    for (let i = 0; i < imagePct; i++) { this.dict.push(0) } // eslint-disable-line no-plusplus
+    for (let i = 0; i < audioPct; i++) { this.dict.push(1) } // eslint-disable-line no-plusplus
+    for (let i = 0; i < videoPct; i++) { this.dict.push(2) } // eslint-disable-line no-plusplus
+
+    return this.dict
+  }
+
+  configure(data) {
+    return new Promise((resolve/* , reject */) => {
+      this.assets[0] = data.filter(_ => _.type === 'image')
+      this.assets[1] = data.filter(_ => _.type === 'audio')
+      this.assets[2] = data.filter(_ => _.type === 'video')
+
+      this.bindAll()
+      this.determineProbability()
+
+      this.preloadImages()
+      .catch(err => console.log(err))
+      .then(resolve)
+    })
   }
 
   bindAll() {
@@ -228,8 +255,7 @@ class Media {
       const $button = $(`[data-play-pause='${$(this).attr('id')}']`)
       $button.removeClass('play').addClass('pause')
     })
-
-    this.init()
+    return this
   }
 
   init() {
