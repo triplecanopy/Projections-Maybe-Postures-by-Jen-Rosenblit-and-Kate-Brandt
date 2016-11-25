@@ -35,6 +35,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   });
 });
 /* global document:true */
+/* eslint-disable import/extensions */
 
 },{"./media.jsx":2,"./scroll.jsx":3,"jquery":80}],2:[function(require,module,exports){
 'use strict';
@@ -92,7 +93,8 @@ var Media = function () {
     this.timer = null;
     this.assets = [[], // images
     [], // audio
-    []];
+    [] // video
+    ];
     this.dict = [];
 
     this.main = (0, _jquery2.default)(this.settings.selector);
@@ -102,9 +104,11 @@ var Media = function () {
           return 30;
         }, function () {
           return 4 / _this2.settings.columns * 2 + 8 * _this2.settings.gutter / 100 * (0, _jquery2.default)(window).width() - 15;
-        }, function () {
+        }, // eslint-disable-line max-len
+        function () {
           return 5 / _this2.settings.columns * 2 + 10 * _this2.settings.gutter / 100 * (0, _jquery2.default)(window).width() - 15;
-        }, function (d) {
+        }, // eslint-disable-line max-len
+        function (d) {
           return (0, _jquery2.default)(window).width() - d.x - 30;
         }],
         y: [function () {
@@ -266,7 +270,7 @@ var Media = function () {
     value: function preloadImages() {
       var _this3 = this;
 
-      return new _promise2.default(function (resolve, reject) {
+      return new _promise2.default(function (resolve /* , reject */) {
         var images = _this3.assets[0];
         return images.map(function (image, i) {
           var img = new Image();
@@ -276,6 +280,7 @@ var Media = function () {
             }
           };
           img.src = image.url + '.jpg';
+          return img;
         });
       });
     }
@@ -286,17 +291,17 @@ var Media = function () {
         return a.concat(b);
       }).length;
 
-      var imagePct = Math.round(7 / assetLength * 100);
-      var audioPct = Math.round(1 / assetLength * 100);
-      var videoPct = Math.round(2 / assetLength * 100);
+      var imageChance = 7;
+      var audioChance = 1;
+      var videoChance = 2;
 
-      for (var i = 0; i < imagePct; i++) {
+      for (var i = 0; i < imageChance; i += 1) {
         this.dict.push(0);
       }
-      for (var _i = 0; _i < audioPct; _i++) {
+      for (var _i = 0; _i < audioChance; _i += 1) {
         this.dict.push(1);
       }
-      for (var _i2 = 0; _i2 < videoPct; _i2++) {
+      for (var _i2 = 0; _i2 < videoChance; _i2 += 1) {
         this.dict.push(2);
       }
 
@@ -307,8 +312,7 @@ var Media = function () {
     value: function configure(data) {
       var _this4 = this;
 
-      return new _promise2.default(function (resolve, reject) {
-
+      return new _promise2.default(function (resolve /* , reject */) {
         _this4.assets[0] = data.filter(function (_) {
           return _.type === 'image';
         });
@@ -347,6 +351,7 @@ var Media = function () {
         var $button = (0, _jquery2.default)('[data-play-pause=\'' + (0, _jquery2.default)(this).attr('id') + '\']');
         $button.removeClass('play').addClass('pause');
       });
+      return this;
     }
   }, {
     key: 'init',
@@ -356,7 +361,8 @@ var Media = function () {
   }]);
   return Media;
 }();
-/* global window:true */
+/* global window:true, Image:true */
+/* eslint-disable no-mixed-operators */
 
 exports.default = Media;
 

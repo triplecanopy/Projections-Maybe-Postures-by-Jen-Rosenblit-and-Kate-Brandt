@@ -211,13 +211,13 @@ class Media {
   determineProbability() {
     const assetLength = this.assets.reduce((a, b) => a.concat(b)).length
 
-    const imagePct = Math.round((7 / assetLength) * 100)
-    const audioPct = Math.round((1 / assetLength) * 100)
-    const videoPct = Math.round((2 / assetLength) * 100)
+    const imageChance = 7
+    const audioChance = 1
+    const videoChance = 2
 
-    for (let i = 0; i < imagePct; i++) { this.dict.push(0) } // eslint-disable-line no-plusplus
-    for (let i = 0; i < audioPct; i++) { this.dict.push(1) } // eslint-disable-line no-plusplus
-    for (let i = 0; i < videoPct; i++) { this.dict.push(2) } // eslint-disable-line no-plusplus
+    for (let i = 0; i < imageChance; i+=1) { this.dict.push(0) }
+    for (let i = 0; i < audioChance; i+=1) { this.dict.push(1) }
+    for (let i = 0; i < videoChance; i+=1) { this.dict.push(2) }
 
     return this.dict
   }
