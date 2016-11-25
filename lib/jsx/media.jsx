@@ -40,18 +40,18 @@ class Media {
         ],
         y: [
           () => $(window).scrollTop() + 30,
-          d => (($(window).scrollTop() + $(window).height()) / 2) - (d.y / 2),
+          d => $(window).scrollTop() + ($(window).height() / 2) - (d.y / 2),
           d => ($(window).scrollTop() + $(window).height()) - d.y - 30
         ]
       },
       video: {
         x: [
-          () => $(window).scrollTop() + 30,
+          () => 30,
           () => (3 / this.settings.columns) * $(window).width() - 15
         ],
         y: [
           () => $(window).scrollTop() + 30,
-          d => (($(window).scrollTop() + $(window).height()) / 2) - (d.y / 2),
+          d => $(window).scrollTop() + ($(window).height() / 2) - (d.y / 2),
           d => ($(window).scrollTop() + $(window).height()) - d.y - 30
         ]
       },
@@ -154,6 +154,10 @@ class Media {
     const ry = this.randomKey(0, this.positions[type].y.length - 1)
     const x = this.positions[type].x[rx](d)
     const y = this.positions[type].y[ry](d)
+
+    console.log(d.x, d.y)
+    console.log(rx, ry)
+
     return { x, y }
   }
 

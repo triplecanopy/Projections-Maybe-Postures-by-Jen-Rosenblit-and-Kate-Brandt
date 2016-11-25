@@ -102,21 +102,21 @@ var Media = function () {
         y: [function () {
           return (0, _jquery2.default)(window).scrollTop() + 30;
         }, function (d) {
-          return ((0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height()) / 2 - d.y / 2;
+          return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() / 2 - d.y / 2;
         }, function (d) {
           return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() - d.y - 30;
         }]
       },
       video: {
         x: [function () {
-          return (0, _jquery2.default)(window).scrollTop() + 30;
+          return 30;
         }, function () {
           return 3 / _this2.settings.columns * (0, _jquery2.default)(window).width() - 15;
         }],
         y: [function () {
           return (0, _jquery2.default)(window).scrollTop() + 30;
         }, function (d) {
-          return ((0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height()) / 2 - d.y / 2;
+          return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() / 2 - d.y / 2;
         }, function (d) {
           return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() - d.y - 30;
         }]
@@ -212,6 +212,10 @@ var Media = function () {
       var ry = this.randomKey(0, this.positions[type].y.length - 1);
       var x = this.positions[type].x[rx](d);
       var y = this.positions[type].y[ry](d);
+
+      console.log(d.x, d.y);
+      console.log(rx, ry);
+
       return { x: x, y: y };
     }
   }, {
