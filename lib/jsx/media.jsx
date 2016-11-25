@@ -199,9 +199,8 @@ class Media {
       const images = this.assets[0]
       return images.map((image, i) => {
         const img = new Image()
-        img.onload = () => {
-          if (i === images.length - 1) { resolve() }
-        }
+        img.onload = () => { if (i === images.length - 1) { resolve() } }
+        img.onerror = () => { reject(`Error loading image: ${image}`) }
         img.src = `${image.url}.jpg`
         return img
       })
@@ -209,8 +208,6 @@ class Media {
   }
 
   determineProbability() {
-    const assetLength = this.assets.reduce((a, b) => a.concat(b)).length
-
     const imageChance = 7
     const audioChance = 1
     const videoChance = 2
