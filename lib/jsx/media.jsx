@@ -30,6 +30,7 @@ class Media {
       [] // video
     ]
     this.dict = []
+    this.audioPlaying = false
 
     this.main = $(this.settings.selector)
     this.positions = {
@@ -118,10 +119,13 @@ class Media {
         audio.id = audioId
         audio.addEventListener('canplay', () => {
           audio.play()
+          this.audioPlaying = true
+          this.cycle()
         }, false)
         audio.addEventListener('ended', () => {
           $('.media__controls').fadeOut(this.settings.fadeSpeed)
-          elem.find('.media__container').fadeOut(this.settings.fadeSpeed, () => this.cycle())
+          this.audioPlaying = false
+          elem.find('.media__container').fadeOut(this.settings.fadeSpeed)
         }, false)
       }
     }
@@ -156,18 +160,14 @@ class Media {
     const ry = this.randomKey(0, this.positions[type].y.length - 1)
     const x = this.positions[type].x[rx](d)
     const y = this.positions[type].y[ry](d)
-
-    console.log(d.x, d.y)
-    console.log(rx, ry)
-
-    return { x, y }
+    return { x, y, rx, ry }
   }
 
   append(elem, type) {
     const d = this.dimensions(type)
     const p = this.randomPos(elem, type, d)
     const css = { height: d.y, width: d.x, top: p.y, left: p.x }
-    this.main.append(elem.css(css))
+    this.main.append(elem.attr('data-pos-x', p.rx).css(css))
     elem.find('.media__container').fadeIn(this.settings.fadeSpeed)
   }
 
@@ -178,28 +178,30 @@ class Media {
 
   show(asset) {
     // create element
+    if (!asset || !asset.type) { return this.cycle() } // dev
     const elem = this.createElement(asset.type, asset.url)
 
     // append to dom
     this.append(elem, asset.type)
     this.decay[asset.type](elem)
+    return this
   }
 
   cycle() {
     const type = this.dict[this.randomKey(0, this.dict.length - 1)]
+    if (this.audioPlaying && type === 'audio') { return this.cycle() }
     const asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)]
-
-    console.log(type, asset)
-
     return this.show(asset)
   }
 
   preloadImages() {
-    return new Promise((resolve/* , reject */) => {
+    return new Promise((resolve, reject) => {
       const images = this.assets[0]
       return images.map((image, i) => {
         const img = new Image()
-        img.onload = () => { if (i === images.length - 1) { resolve() } }
+        img.onload = () => {
+          if (i === images.length - 1) { resolve() }
+        }
         img.onerror = () => { reject(`Error loading image: ${image}`) }
         img.src = `${image.url}.jpg`
         return img
@@ -212,9 +214,9 @@ class Media {
     const audioChance = 1
     const videoChance = 2
 
-    for (let i = 0; i < imageChance; i+=1) { this.dict.push(0) }
-    for (let i = 0; i < audioChance; i+=1) { this.dict.push(1) }
-    for (let i = 0; i < videoChance; i+=1) { this.dict.push(2) }
+    for (let i = 0; i < imageChance; i += 1) { this.dict.push(0) }
+    for (let i = 0; i < audioChance; i += 1) { this.dict.push(1) }
+    for (let i = 0; i < videoChance; i += 1) { this.dict.push(2) }
 
     return this.dict
   }
@@ -232,6 +234,19 @@ class Media {
       .catch(err => console.log(err))
       .then(resolve)
     })
+  }
+
+  onResize() {
+    ['image', 'audio', 'video'].forEach((_) => {
+      const d = this.dimensions(_)
+      $(`.media__${_}`).each((i, elem) => {
+        const pos = parseInt($(elem).attr('data-pos-x'), 10)
+        const left = this.positions[_].x[pos](d)
+        const css = { height: d.y, width: d.x, left }
+        $(elem).css(css)
+      })
+    })
+
   }
 
   bindAll() {
@@ -252,6 +267,9 @@ class Media {
       const $button = $(`[data-play-pause='${$(this).attr('id')}']`)
       $button.removeClass('play').addClass('pause')
     })
+
+    $(window).on('resize', () => this.onResize())
+
     return this
   }
 

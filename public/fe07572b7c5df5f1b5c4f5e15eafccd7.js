@@ -96,6 +96,7 @@ var Media = function () {
     [] // video
     ];
     this.dict = [];
+    this.audioPlaying = false;
 
     this.main = (0, _jquery2.default)(this.settings.selector);
     this.positions = {
@@ -179,12 +180,13 @@ var Media = function () {
         audio.id = audioId;
         audio.addEventListener('canplay', function () {
           audio.play();
+          _this2.audioPlaying = true;
+          _this2.cycle();
         }, false);
         audio.addEventListener('ended', function () {
           (0, _jquery2.default)('.media__controls').fadeOut(_this2.settings.fadeSpeed);
-          elem.find('.media__container').fadeOut(_this2.settings.fadeSpeed, function () {
-            return _this2.cycle();
-          });
+          _this2.audioPlaying = false;
+          elem.find('.media__container').fadeOut(_this2.settings.fadeSpeed);
         }, false);
       }
     };
@@ -224,11 +226,7 @@ var Media = function () {
       var ry = this.randomKey(0, this.positions[type].y.length - 1);
       var x = this.positions[type].x[rx](d);
       var y = this.positions[type].y[ry](d);
-
-      console.log(d.x, d.y);
-      console.log(rx, ry);
-
-      return { x: x, y: y };
+      return { x: x, y: y, rx: rx, ry: ry };
     }
   }, {
     key: 'append',
@@ -236,7 +234,7 @@ var Media = function () {
       var d = this.dimensions(type);
       var p = this.randomPos(elem, type, d);
       var css = { height: d.y, width: d.x, top: p.y, left: p.x };
-      this.main.append(elem.css(css));
+      this.main.append(elem.attr('data-pos-x', p.rx).css(css));
       elem.find('.media__container').fadeIn(this.settings.fadeSpeed);
     }
   }, {
@@ -249,20 +247,24 @@ var Media = function () {
     key: 'show',
     value: function show(asset) {
       // create element
+      if (!asset || !asset.type) {
+        return this.cycle();
+      } // dev
       var elem = this.createElement(asset.type, asset.url);
 
       // append to dom
       this.append(elem, asset.type);
       this.decay[asset.type](elem);
+      return this;
     }
   }, {
     key: 'cycle',
     value: function cycle() {
       var type = this.dict[this.randomKey(0, this.dict.length - 1)];
+      if (this.audioPlaying && type === 'audio') {
+        return this.cycle();
+      }
       var asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)];
-
-      console.log(type, asset);
-
       return this.show(asset);
     }
   }, {
@@ -270,7 +272,7 @@ var Media = function () {
     value: function preloadImages() {
       var _this3 = this;
 
-      return new _promise2.default(function (resolve /* , reject */) {
+      return new _promise2.default(function (resolve, reject) {
         var images = _this3.assets[0];
         return images.map(function (image, i) {
           var img = new Image();
@@ -278,6 +280,9 @@ var Media = function () {
             if (i === images.length - 1) {
               resolve();
             }
+          };
+          img.onerror = function () {
+            reject('Error loading image: ' + image);
           };
           img.src = image.url + '.jpg';
           return img;
@@ -287,10 +292,6 @@ var Media = function () {
   }, {
     key: 'determineProbability',
     value: function determineProbability() {
-      var assetLength = this.assets.reduce(function (a, b) {
-        return a.concat(b);
-      }).length;
-
       var imageChance = 7;
       var audioChance = 1;
       var videoChance = 2;
@@ -332,8 +333,25 @@ var Media = function () {
       });
     }
   }, {
+    key: 'onResize',
+    value: function onResize() {
+      var _this5 = this;
+
+      ['image', 'audio', 'video'].forEach(function (_) {
+        var d = _this5.dimensions(_);
+        (0, _jquery2.default)('.media__' + _).each(function (i, elem) {
+          var pos = parseInt((0, _jquery2.default)(elem).attr('data-pos-x'), 10);
+          var left = _this5.positions[_].x[pos](d);
+          var css = { height: d.y, width: d.x, left: left };
+          (0, _jquery2.default)(elem).css(css);
+        });
+      });
+    }
+  }, {
     key: 'bindAll',
     value: function bindAll() {
+      var _this6 = this;
+
       (0, _jquery2.default)('.media__button').on('click', function bindAudio() {
         var audio = (0, _jquery2.default)('audio#' + (0, _jquery2.default)(this).attr('data-play-pause'))[0];
         if (audio.paused) {
@@ -351,6 +369,11 @@ var Media = function () {
         var $button = (0, _jquery2.default)('[data-play-pause=\'' + (0, _jquery2.default)(this).attr('id') + '\']');
         $button.removeClass('play').addClass('pause');
       });
+
+      (0, _jquery2.default)(window).on('resize', function () {
+        return _this6.onResize();
+      });
+
       return this;
     }
   }, {
