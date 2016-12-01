@@ -109,7 +109,7 @@ class Media {
       video: `<div class="media media__video">
         <div class="media__container">
           <div class="media__container--video">
-            <video>
+            <video playsinline webkit-playsinline>
               <source src="/ASSET_URL.webm" type="video/webm">
               <source src="/ASSET_URL.mp4" type="video/mp4">
               <source src="/ASSET_URL.ogv" type="video/ogg">
