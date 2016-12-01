@@ -30,7 +30,11 @@ $light-grey: #f2f2f2;
 
 html,body { width: 100%; }
 html { min-height: 200%; }
-body { background-color: $white; }
+body {
+  background-color: $white;
+  opacity: 0;
+  &.ready { opacity: 1; }
+}
 
 .media {
   position: absolute;

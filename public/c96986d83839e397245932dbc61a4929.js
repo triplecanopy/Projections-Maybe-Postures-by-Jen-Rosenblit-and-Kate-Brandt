@@ -73,12 +73,14 @@ var Media = function () {
     (0, _classCallCheck3.default)(this, Media);
 
     this.settings = {
-      fadeToOpacity: 0.3, // float
+      fadeToOpacity: 0.1, // float / int
       fadeInSpeed: 100, // int
       fadeOutSpeed: 3000, // int
       cycleSpeed: 3000, // int
+      overlapTime: 1500, // int
+      offsetBottom: 300, // int
       columns: 18, // int
-      gutter: 2.47469, // float
+      gutter: 2.47469, // float / int
       selector: 'main', // string
       introSelector: '.intro' // string
     };
@@ -99,7 +101,7 @@ var Media = function () {
       if (window.location.href.match(/localhost/) === null) {
         return true;
       }
-      return Boolean(this.isFloat(this.settings.fadeToOpacity) && this.isInteger(this.settings.fadeInSpeed) && this.isInteger(this.settings.fadeOutSpeed) && this.isInteger(this.settings.cycleSpeed) && this.isInteger(this.settings.columns) && (this.isFloat(this.settings.gutter) || this.isInteger(this.settings.gutter)) && this.isString(this.settings.selector) && this.isString(this.settings.introSelector));
+      return Boolean((this.isFloat(this.settings.fadeToOpacity) || this.isInteger(this.settings.fadeToOpacity)) && this.isInteger(this.settings.fadeInSpeed) && this.isInteger(this.settings.fadeOutSpeed) && this.isInteger(this.settings.cycleSpeed) && this.isInteger(this.settings.overlapTime) && this.isInteger(this.settings.columns) && (this.isFloat(this.settings.gutter) || this.isInteger(this.settings.gutter)) && this.isString(this.settings.selector) && this.isString(this.settings.introSelector));
     };
 
     this.randomKey = function randomKey(min, max) {
@@ -112,7 +114,10 @@ var Media = function () {
       });
     };
 
+    this.noop = function noop() {};
+
     this.decayTimer = null;
+    this.appendTimer = null;
     this.cycleTimer = null;
     this.assets = [[], // images
     [], // audio
@@ -141,7 +146,7 @@ var Media = function () {
         }, function (d) {
           return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() / 2 - d.y / 2;
         }, function (d) {
-          return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() - d.y - 30;
+          return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() - d.y - 30 + _this2.settings.offsetBottom;
         }]
       },
       video: {
@@ -155,7 +160,7 @@ var Media = function () {
         }, function (d) {
           return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() / 2 - d.y / 2;
         }, function (d) {
-          return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() - d.y - 30;
+          return (0, _jquery2.default)(window).scrollTop() + (0, _jquery2.default)(window).height() - d.y - 30 + _this2.settings.offsetBottom;
         }]
       },
       audio: {
@@ -179,14 +184,20 @@ var Media = function () {
     this.decay = {
       image: function image(elem) {
         // timeout fade based on elem type
-        _this2.decayTimer = setTimeout(function timerSet(_this) {
-          return function timerDone() {
+        _this2.decayTimer = setTimeout(function decayTimerSet(_this) {
+          return function decayTimerDone() {
             clearTimeout(_this.decayTimer);
             _this.fadeTo(elem.find('.media__container'), function () {
-              return _this.cycle();
+              return _this.noop();
             });
           };
-        }(_this2), _this2.settings.cycleSpeed - _this2.settings.fadeInSpeed);
+        }(_this2), _this2.settings.cycleSpeed);
+        _this2.appendTimer = setTimeout(function appendTimerSet(_this) {
+          return function appendTimerDone() {
+            clearTimeout(_this.appendTimer);
+            _this.cycle();
+          };
+        }(_this2), _this2.settings.cycleSpeed + _this2.settings.fadeOutSpeed - _this2.settings.overlapTime);
         return _this2.decayTimer;
       },
       video: function video(elem) {
@@ -195,9 +206,20 @@ var Media = function () {
         video.addEventListener('canplay', function () {
           video.play();
         }, false);
+
+        var videoTimeupdateCallback = function videoTimeupdateCallback() {
+          var current = Math.round((video.duration - video.currentTime) * 1000);
+          if (current <= _this2.settings.overlapTime) {
+            setTimeout(function () {
+              _this2.cycle();
+            }, _this2.settings.fadeOutSpeed);
+            video.removeEventListener('timeupdate', videoTimeupdateCallback);
+          }
+        };
+        video.addEventListener('timeupdate', videoTimeupdateCallback, false);
         video.addEventListener('ended', function () {
           _this2.fadeTo(elem.find('.media__container'), function () {
-            return _this2.cycle();
+            return _this2.noop();
           });
         }, false);
       },
@@ -314,6 +336,9 @@ var Media = function () {
 
       return new _promise2.default(function (resolve, reject) {
         var images = _this4.assets[0];
+        if (!images.length) {
+          return resolve();
+        }
         return images.map(function (image, i) {
           var img = new Image();
           img.onload = function () {
@@ -431,6 +456,10 @@ var Media = function () {
         return window.alert( // eslint-disable-line no-alert
         'Invalid settings object.\nVerify `media.jsx` between lines 10 and 16');
       }
+      (0, _jquery2.default)(window).scrollTop(0);
+      setTimeout(function () {
+        (0, _jquery2.default)('body').addClass('ready');
+      }, 0);
       return this.cycle();
     }
   }]);

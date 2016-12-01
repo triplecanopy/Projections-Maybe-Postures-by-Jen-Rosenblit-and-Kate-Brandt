@@ -8,12 +8,14 @@ import $ from 'jquery'
 class Media {
   constructor(options) {
     this.settings = {
-      fadeToOpacity: 0.3,         // float
+      fadeToOpacity: 0.1,         // float / int
       fadeInSpeed: 100,           // int
       fadeOutSpeed: 3000,         // int
       cycleSpeed: 3000,           // int
+      overlapTime: 1500,          // int
+      offsetBottom: 300,          // int
       columns: 18,                // int
-      gutter: 2.47469,            // float
+      gutter: 2.47469,            // float / int
       selector: 'main',           // string
       introSelector: '.intro'     // string
     }
@@ -33,10 +35,11 @@ class Media {
     this.validateSettings = function validateSettings() {
       if (window.location.href.match(/localhost/) === null) { return true }
       return Boolean(
-        this.isFloat(this.settings.fadeToOpacity)
+        (this.isFloat(this.settings.fadeToOpacity) || this.isInteger(this.settings.fadeToOpacity))
         && this.isInteger(this.settings.fadeInSpeed)
         && this.isInteger(this.settings.fadeOutSpeed)
         && this.isInteger(this.settings.cycleSpeed)
+        && this.isInteger(this.settings.overlapTime)
         && this.isInteger(this.settings.columns)
         && (this.isFloat(this.settings.gutter) || this.isInteger(this.settings.gutter))
         && this.isString(this.settings.selector)
@@ -52,7 +55,10 @@ class Media {
       return $.get('/api/media', resp => resp)
     }
 
+    this.noop = function noop() {}
+
     this.decayTimer = null
+    this.appendTimer = null
     this.cycleTimer = null
     this.assets = [
       [], // images
@@ -75,7 +81,7 @@ class Media {
         y: [
           () => $(window).scrollTop() + 30,
           d => $(window).scrollTop() + ($(window).height() / 2) - (d.y / 2),
-          d => ($(window).scrollTop() + $(window).height()) - d.y - 30
+          d => ($(window).scrollTop() + $(window).height()) - d.y - 30 + this.settings.offsetBottom
         ]
       },
       video: {
@@ -86,7 +92,7 @@ class Media {
         y: [
           () => $(window).scrollTop() + 30,
           d => $(window).scrollTop() + ($(window).height() / 2) - (d.y / 2),
-          d => ($(window).scrollTop() + $(window).height()) - d.y - 30
+          d => ($(window).scrollTop() + $(window).height()) - d.y - 30 + this.settings.offsetBottom
         ]
       },
       audio: {
@@ -129,12 +135,18 @@ class Media {
     this.decay = {
       image: (elem) => {
         // timeout fade based on elem type
-        this.decayTimer = setTimeout((function timerSet(_this) {
-          return function timerDone() {
+        this.decayTimer = setTimeout((function decayTimerSet(_this) {
+          return function decayTimerDone() {
             clearTimeout(_this.decayTimer)
-            _this.fadeTo(elem.find('.media__container'), () => _this.cycle())
+            _this.fadeTo(elem.find('.media__container'), () => _this.noop())
           }
-        }(this)), this.settings.cycleSpeed - this.settings.fadeInSpeed)
+        }(this)), this.settings.cycleSpeed)
+        this.appendTimer = setTimeout((function appendTimerSet(_this) {
+          return function appendTimerDone() {
+            clearTimeout(_this.appendTimer)
+            _this.cycle()
+          }
+        }(this)), this.settings.cycleSpeed + this.settings.fadeOutSpeed - this.settings.overlapTime)
         return this.decayTimer
       },
       video: (elem) => {
@@ -143,8 +155,19 @@ class Media {
         video.addEventListener('canplay', () => {
           video.play()
         }, false)
+
+        const videoTimeupdateCallback = () => {
+          const current = Math.round((video.duration - video.currentTime) * 1000)
+          if (current <= this.settings.overlapTime) {
+            setTimeout(() => {
+              this.cycle()
+            }, this.settings.fadeOutSpeed)
+            video.removeEventListener('timeupdate', videoTimeupdateCallback)
+          }
+        }
+        video.addEventListener('timeupdate', videoTimeupdateCallback, false)
         video.addEventListener('ended', () => {
-          this.fadeTo(elem.find('.media__container'), () => this.cycle())
+          this.fadeTo(elem.find('.media__container'), () => this.noop())
         }, false)
       },
       audio: (elem) => {
@@ -238,6 +261,7 @@ class Media {
   preloadImages() {
     return new Promise((resolve, reject) => {
       const images = this.assets[0]
+      if (!images.length) { return resolve() }
       return images.map((image, i) => {
         const img = new Image()
         img.onload = () => {
@@ -324,6 +348,8 @@ class Media {
         'Invalid settings object.\nVerify `media.jsx` between lines 10 and 16'
       )
     }
+    $(window).scrollTop(0)
+    setTimeout(function() { $('body').addClass('ready') }, 0)
     return this.cycle()
   }
 }
