@@ -415,7 +415,7 @@ var Media = function () {
   }, {
     key: 'onScroll',
     value: function onScroll() {
-      this.allowCycle = Boolean((0, _jquery2.default)(window).scrollTop() >= (0, _jquery2.default)(this.settings.introSelector).height());
+      this.allowCycle = Boolean((0, _jquery2.default)(window).scrollTop() >= (0, _jquery2.default)(this.settings.introSelector).height() - 50);
     }
   }, {
     key: 'bindAll',

@@ -314,7 +314,7 @@ class Media {
   }
 
   onScroll() {
-    this.allowCycle = Boolean($(window).scrollTop() >= $(this.settings.introSelector).height())
+    this.allowCycle = Boolean($(window).scrollTop() >= $(this.settings.introSelector).height() - 50)
   }
 
   bindAll() {
