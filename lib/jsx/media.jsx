@@ -8,16 +8,16 @@ import $ from 'jquery'
 class Media {
   constructor(options) {
     this.settings = {
-      fadeToOpacity: 0.1,         // float / int
-      fadeInSpeed: 100,           // int
-      fadeOutSpeed: 3000,         // int
-      cycleSpeed: 3000,           // int
-      overlapTime: 1500,          // int
-      offsetBottom: 300,          // int
-      columns: 18,                // int
-      gutter: 2.47469,            // float / int
-      selector: 'main',           // string
-      introSelector: '.intro'     // string
+      fadeToOpacity: 0.1,           // float / int
+      fadeInSpeed: 100,             // int
+      fadeOutSpeed: 3000,           // int
+      cycleSpeed: 3000,             // int
+      overlapTime: 1500,            // int
+      offsetBottom: 300,            // int
+      columns: 18,                  // int
+      gutter: 2.47469,              // float / int
+      selector: 'main',             // string
+      introSelector: '.container'   // string
     }
 
     this.isInteger = function isInteger(n) {

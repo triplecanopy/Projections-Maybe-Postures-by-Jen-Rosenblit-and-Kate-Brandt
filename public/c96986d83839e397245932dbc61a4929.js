@@ -82,7 +82,7 @@ var Media = function () {
       columns: 18, // int
       gutter: 2.47469, // float / int
       selector: 'main', // string
-      introSelector: '.intro' // string
+      introSelector: '.container' // string
     };
 
     this.isInteger = function isInteger(n) {

@@ -19,7 +19,7 @@ $ gulp serve
 $ npm start
 ```
 
-# Build
+## Build
 
 ```
 $ gulp build
