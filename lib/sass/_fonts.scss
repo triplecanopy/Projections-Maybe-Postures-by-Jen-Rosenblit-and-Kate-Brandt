@@ -10,3 +10,74 @@
   font-weight:normal;
   font-style:normal;
 }
+
+// Crimson
+@font-face{
+  font-family:'TCCrimson';
+  src: url(/TC-crimson-roman-webfont.eot);
+  src:
+    url(/TC-crimson-roman-webfont.eot?#iefix) format('embedded-opentype'),
+    url(/TC-crimson-roman-webfont.woff) format('application/x-font-woff'),
+    url(/TC-crimson-roman-webfont.ttf) format('truetype');
+  font-weight:normal;
+  font-style:normal;
+}
+
+@font-face{
+  font-family:'TCCrimson';
+  src: url(/TC-crimson-bold-webfont.eot);
+  src:
+    url(/TC-crimson-bold-webfont.eot?#iefix) format('embedded-opentype'),
+    url(/TC-crimson-bold-webfont.woff) format('application/x-font-woff'),
+    url(/TC-crimson-bold-webfont.ttf) format('truetype');
+  font-weight:bold;
+  font-style:normal;
+}
+
+@font-face{
+  font-family:'TCCrimson';
+  src: url(/TC-crimson-italic-webfont.eot);
+  src:
+    url(/TC-crimson-italic-webfont.eot?#iefix) format('embedded-opentype'),
+    url(/TC-crimson-italic-webfont.woff) format('application/x-font-woff'),
+    url(/TC-crimson-italic-webfont.ttf) format('truetype');
+  font-weight:normal;
+  font-style:italic;
+}
+
+@font-face{
+  font-family:'TCCrimson';
+  src: url(/TC-crimson-bolditalic-webfont.eot);
+  src:
+    url(/TC-crimson-bolditalic-webfont.eot?#iefix) format('embedded-opentype'),
+    url(/TC-crimson-bolditalic-webfont.woff) format('application/x-font-woff'),
+    url(/TC-crimson-bolditalic-webfont.ttf) format('truetype');
+  font-weight:bold;
+  font-style:italic;
+}
+
+// GC16
+@font-face{
+  font-family:'gc16 Mono';
+  src:
+    url(/gc16-Mono.woff),
+    url(/gc16-Mono.woff2);
+  font-weight:normal;
+  font-style:normal;
+}
+
+@font-face{
+  font-family:'gc16 Mono';
+  src:
+    url(/gc16-MonoItalic.woff),
+    url(/gc16-MonoItalic.woff2);
+  font-weight:normal;
+  font-style:italic;
+}
+
+
+// Stacks
+$TCCrimson: "TCCrimson", TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif;
+$FreeUniversal: "FreeUniversal", Futura, "Trebuchet MS", Arial, sans-serif;
+$Archivo: "tcarchivoregular", "Arial Black", "Arial Bold", sans-serif;
+$gc16-mono:"gc16 Mono", monospace;

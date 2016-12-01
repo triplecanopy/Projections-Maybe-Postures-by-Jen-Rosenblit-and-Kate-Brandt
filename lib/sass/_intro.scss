@@ -33,24 +33,21 @@ body {
   font-size: 100%;
   line-height: 1;
   text-align: left;
+}
 
-  .intro {
+.intro {
+  @include site-width;
 
-    @include site-width;
+  line-height: 1.45;
+  font-size: 1.75rem;
+  font-family: $TCCrimson;
+}
 
-    line-height: 1.45;
-    font-size: 1.75rem;
-    font-family: $TCCrimson;
-
-
-  .title{
-    font-family: HWTRepublicGothicOutline, sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 1.9rem;
-    line-height: 1.3;
-    padding-right: 10px;
-  }
+.title{
+  @include gc16-mono;
+  padding: 2.7rem 0;
+  font-size:2.7rem;
+  line-height: 1.2;
 }
 
 
