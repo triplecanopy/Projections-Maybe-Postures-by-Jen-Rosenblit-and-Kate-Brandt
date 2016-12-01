@@ -9,6 +9,7 @@
 
 $black: #222;
 $white: #fff;
+$light-grey: #f2f2f2;
 
 @mixin background-element {
   background-color: transparent;
@@ -27,11 +28,11 @@ $white: #fff;
 
 html,body { width: 100%; }
 html { min-height: 200%; }
-body { background-color: gainsboro; }
+body { background-color: $white; }
 
 .media {
   position: absolute;
-  background-color: $white;
+  background-color: $light-grey;
   &__container {
     display: none;
     @include full-height-full-width;
