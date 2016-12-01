@@ -1,6 +1,6 @@
 
 /* global window:true, Image:true */
-/* eslint-disable no-mixed-operators */
+/* eslint-disable no-mixed-operators, operator-linebreak */
 
 
 import $ from 'jquery'
@@ -8,11 +8,36 @@ import $ from 'jquery'
 class Media {
   constructor(options) {
     this.settings = {
-      fadeSpeed: 400,
-      cycleSpeed: 3000,
-      columns: 18,
-      gutter: 2.47469,
-      selector: 'main'
+      fadeToOpacity: 0.3, // float
+      fadeSpeed: 400,     // int
+      cycleSpeed: 3000,   // int
+      columns: 18,        // int
+      gutter: 2.47469,    // float
+      selector: 'main'    // string
+    }
+
+    this.isInteger = function isInteger(n) {
+      return Number(n) === n && n % 1 === 0
+    }
+
+    this.isFloat = function isFloat(n) {
+      return Number(n) === n && n % 1 !== 0
+    }
+
+    this.isString = function isString(s) {
+      return typeof s === 'string'
+    }
+
+    this.validateSettings = function validateSettings() {
+      if (window.location.href.match(/localhost/) === null) { return true }
+      return Boolean(
+        this.isFloat(this.settings.fadeToOpacity)
+        && this.isInteger(this.settings.fadeSpeed)
+        && this.isInteger(this.settings.cycleSpeed)
+        && this.isInteger(this.settings.columns)
+        && (this.isFloat(this.settings.gutter) || this.isInteger(this.settings.gutter))
+        && this.isString(this.settings.selector)
+      )
     }
 
     this.randomKey = function randomKey(min, max) {
@@ -59,7 +84,8 @@ class Media {
         ]
       },
       audio: {
-        x: [() => 0], y: [() => 0]
+        x: [() => 0],
+        y: [() => 0]
       }
     }
     this.models = {
@@ -90,13 +116,17 @@ class Media {
         </div>
       </div>`
     }
+    this.fadeTo = function fadeTo(elem, callback) {
+      const css = { opacity: this.settings.fadeToOpacity }
+      $(elem).animate(css, this.settings.fadeSpeed, callback)
+    }
     this.decay = {
       image: (elem) => {
         // timeout fade based on elem type
         this.timer = setTimeout((function timerSet(_this) {
           return function timerDone() {
             clearTimeout(_this.timer)
-            elem.find('.media__container').fadeOut(_this.settings.fadeSpeed, () => _this.cycle())
+            _this.fadeTo(elem.find('.media__container'), () => _this.cycle())
           }
         }(this)), this.settings.cycleSpeed - this.settings.fadeSpeed)
         return this.timer
@@ -108,7 +138,7 @@ class Media {
           video.play()
         }, false)
         video.addEventListener('ended', () => {
-          elem.find('.media__container').fadeOut(this.settings.fadeSpeed, () => this.cycle())
+          this.fadeTo(elem.find('.media__container'), () => this.cycle())
         }, false)
       },
       audio: (elem) => {
@@ -274,7 +304,13 @@ class Media {
   }
 
   init() {
-    this.cycle()
+    if (this.validateSettings() === false) {
+      return window.alert( // eslint-disable-line no-alert
+        'Invalid settings object.\nVerify `media.jsx` between lines 10 and 16'
+      )
+    }
+
+    return this.cycle()
   }
 }
 

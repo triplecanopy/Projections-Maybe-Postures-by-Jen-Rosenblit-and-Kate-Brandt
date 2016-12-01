@@ -9,10 +9,15 @@ var rename = require('gulp-rename')
 var exec = require('child_process').exec
 var fs = require('fs')
 
-var rev = 'fe07572b7c5df5f1b5c4f5e15eafccd7'
+var rev = 'c96986d83839e397245932dbc61a4929'
 
 gulp.task('scripts', function () {
-  return exec('browserify ./lib/jsx/application.jsx -o ./public/' + rev + '.js -t [ babelify --presets [ es2015 ] ]', { cwd: './' }, (function(err) {
+  return exec([
+    './node_modules/.bin/browserify',
+    './lib/jsx/application.jsx -o',
+    './public/' + rev + '.js -t',
+    '[ babelify --presets [ es2015 ] ]'
+  ].join(' '), { cwd: './' }, (function(err) {
     if (err) { throw err }
   }))
 })
