@@ -8,12 +8,14 @@ import $ from 'jquery'
 class Media {
   constructor(options) {
     this.settings = {
-      fadeToOpacity: 0.3, // float
-      fadeSpeed: 400,     // int
-      cycleSpeed: 3000,   // int
-      columns: 18,        // int
-      gutter: 2.47469,    // float
-      selector: 'main'    // string
+      fadeToOpacity: 0.3,         // float
+      fadeInSpeed: 100,           // int
+      fadeOutSpeed: 3000,         // int
+      cycleSpeed: 3000,           // int
+      columns: 18,                // int
+      gutter: 2.47469,            // float
+      selector: 'main',           // string
+      introSelector: '.intro'     // string
     }
 
     this.isInteger = function isInteger(n) {
@@ -32,11 +34,13 @@ class Media {
       if (window.location.href.match(/localhost/) === null) { return true }
       return Boolean(
         this.isFloat(this.settings.fadeToOpacity)
-        && this.isInteger(this.settings.fadeSpeed)
+        && this.isInteger(this.settings.fadeInSpeed)
+        && this.isInteger(this.settings.fadeOutSpeed)
         && this.isInteger(this.settings.cycleSpeed)
         && this.isInteger(this.settings.columns)
         && (this.isFloat(this.settings.gutter) || this.isInteger(this.settings.gutter))
         && this.isString(this.settings.selector)
+        && this.isString(this.settings.introSelector)
       )
     }
 
@@ -48,7 +52,8 @@ class Media {
       return $.get('/api/media', resp => resp)
     }
 
-    this.timer = null
+    this.decayTimer = null
+    this.cycleTimer = null
     this.assets = [
       [], // images
       [], // audio
@@ -56,6 +61,7 @@ class Media {
     ]
     this.dict = []
     this.audioPlaying = false
+    this.allowCycle = false
 
     this.main = $(this.settings.selector)
     this.positions = {
@@ -118,18 +124,18 @@ class Media {
     }
     this.fadeTo = function fadeTo(elem, callback) {
       const css = { opacity: this.settings.fadeToOpacity }
-      $(elem).animate(css, this.settings.fadeSpeed, callback)
+      $(elem).animate(css, this.settings.fadeOutSpeed, callback)
     }
     this.decay = {
       image: (elem) => {
         // timeout fade based on elem type
-        this.timer = setTimeout((function timerSet(_this) {
+        this.decayTimer = setTimeout((function timerSet(_this) {
           return function timerDone() {
-            clearTimeout(_this.timer)
+            clearTimeout(_this.decayTimer)
             _this.fadeTo(elem.find('.media__container'), () => _this.cycle())
           }
-        }(this)), this.settings.cycleSpeed - this.settings.fadeSpeed)
-        return this.timer
+        }(this)), this.settings.cycleSpeed - this.settings.fadeInSpeed)
+        return this.decayTimer
       },
       video: (elem) => {
         const video = elem.find('video')[0]
@@ -144,18 +150,18 @@ class Media {
       audio: (elem) => {
         const audio = elem.find('audio')[0]
         const audioId = `_${Math.round(Math.random() * 1000000)}`
-        $('.media__controls').fadeIn(this.settings.fadeSpeed)
+        $('.media__controls').fadeIn(this.settings.fadeInSpeed)
         $('.media__button').addClass('pause').removeClass('play').attr('data-play-pause', audioId)
         audio.id = audioId
         audio.addEventListener('canplay', () => {
           audio.play()
           this.audioPlaying = true
-          this.cycle()
+          setTimeout(() => this.cycle(), 1000) // delay before restarting cycle after audio starts
         }, false)
         audio.addEventListener('ended', () => {
-          $('.media__controls').fadeOut(this.settings.fadeSpeed)
+          $('.media__controls').fadeOut(this.settings.fadeOutSpeed)
           this.audioPlaying = false
-          elem.find('.media__container').fadeOut(this.settings.fadeSpeed)
+          elem.find('.media__container').fadeOut(this.settings.fadeOutSpeed)
         }, false)
       }
     }
@@ -218,6 +224,11 @@ class Media {
   }
 
   cycle() {
+    if (this.allowCycle === false) {
+      this.cycleTimer = setTimeout(() => this.cycle(), 600)
+      return this.cycleTimer
+    }
+    clearTimeout(this.cycleTimer)
     const type = this.dict[this.randomKey(0, this.dict.length - 1)]
     if (this.audioPlaying && type === 'audio') { return this.cycle() }
     const asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)]
@@ -276,7 +287,10 @@ class Media {
         $(elem).css(css)
       })
     })
+  }
 
+  onScroll() {
+    this.allowCycle = Boolean($(window).scrollTop() >= $(this.settings.introSelector).height())
   }
 
   bindAll() {
@@ -299,6 +313,7 @@ class Media {
     })
 
     $(window).on('resize', () => this.onResize())
+    $(window).on('scroll', () => this.onScroll())
 
     return this
   }
@@ -309,7 +324,6 @@ class Media {
         'Invalid settings object.\nVerify `media.jsx` between lines 10 and 16'
       )
     }
-
     return this.cycle()
   }
 }
