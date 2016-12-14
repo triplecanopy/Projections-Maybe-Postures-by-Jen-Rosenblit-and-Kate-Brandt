@@ -174,7 +174,7 @@ var Media = function () {
     };
     this.models = {
       image: '<div class="media media__image">\n        <div class="media__container">\n          <div class="media__container--image" style="background-image:url(/ASSET_URL.jpg)"></div>\n        </div>\n      </div>',
-      video: '<div class="media media__video">\n        <div class="media__container">\n          <div class="media__container--video">\n            <video>\n              <source src="/ASSET_URL.webm" type="video/webm">\n              <source src="/ASSET_URL.mp4" type="video/mp4">\n              <source src="/ASSET_URL.ogv" type="video/ogg">\n          </video>\n          </div>\n        </div>\n      </div>',
+      video: '<div class="media media__video">\n        <div class="media__container">\n          <div class="media__container--video">\n            <video playsinline webkit-playsinline>\n              <source src="/ASSET_URL.webm" type="video/webm">\n              <source src="/ASSET_URL.mp4" type="video/mp4">\n              <source src="/ASSET_URL.ogv" type="video/ogg">\n          </video>\n          </div>\n        </div>\n      </div>',
       audio: '<div class="media media__audio">\n        <div class="media__container">\n          <div class="media__container--audio">\n            <audio>\n               <source src="/ASSET_URL.ogg">\n               <source src="/ASSET_URL.mp3">\n            </audio>\n          </div>\n        </div>\n      </div>'
     };
     this.fadeTo = function fadeTo(elem, callback) {
@@ -358,7 +358,7 @@ var Media = function () {
     key: 'determineProbability',
     value: function determineProbability() {
       var imageChance = 7;
-      var audioChance = 1;
+      var audioChance = 2;
       var videoChance = 2;
 
       for (var i = 0; i < imageChance; i += 1) {
