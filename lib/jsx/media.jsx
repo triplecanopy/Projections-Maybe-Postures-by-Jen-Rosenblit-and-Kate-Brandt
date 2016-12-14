@@ -276,7 +276,7 @@ class Media {
 
   determineProbability() {
     const imageChance = 7
-    const audioChance = 1
+    const audioChance = 2
     const videoChance = 2
 
     for (let i = 0; i < imageChance; i += 1) { this.dict.push(0) }
