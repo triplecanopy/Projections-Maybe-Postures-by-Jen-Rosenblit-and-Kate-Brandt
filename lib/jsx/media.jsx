@@ -177,11 +177,13 @@ class Media {
         $('.media__button').addClass('pause').removeClass('play').attr('data-play-pause', audioId)
         audio.id = audioId
         audio.addEventListener('canplay', () => {
+          console.log('--- starts')
           audio.play()
           this.audioPlaying = true
           setTimeout(() => this.cycle(), 1000) // delay before restarting cycle after audio starts
         }, false)
         audio.addEventListener('ended', () => {
+          console.log('--- ended')
           $('.media__controls').fadeOut(this.settings.fadeOutSpeed)
           this.audioPlaying = false
           elem.find('.media__container').fadeOut(this.settings.fadeOutSpeed)
@@ -237,7 +239,6 @@ class Media {
 
   show(asset) {
     // create element
-    if (!asset || !asset.type) { return this.cycle() } // dev
     const elem = this.createElement(asset.type, asset.url)
 
     // append to dom
@@ -253,7 +254,7 @@ class Media {
     }
     clearTimeout(this.cycleTimer)
     const type = this.dict[this.randomKey(0, this.dict.length - 1)]
-    if (this.audioPlaying && type === 'audio') { return this.cycle() }
+    if (this.audioPlaying && type === 1) { return this.cycle() }
     const asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)]
     return this.show(asset)
   }

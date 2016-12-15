@@ -230,6 +230,7 @@ var Media = function () {
         (0, _jquery2.default)('.media__button').addClass('pause').removeClass('play').attr('data-play-pause', audioId);
         audio.id = audioId;
         audio.addEventListener('canplay', function () {
+          console.log('--- starts');
           audio.play();
           _this2.audioPlaying = true;
           setTimeout(function () {
@@ -237,6 +238,7 @@ var Media = function () {
           }, 1000); // delay before restarting cycle after audio starts
         }, false);
         audio.addEventListener('ended', function () {
+          console.log('--- ended');
           (0, _jquery2.default)('.media__controls').fadeOut(_this2.settings.fadeOutSpeed);
           _this2.audioPlaying = false;
           elem.find('.media__container').fadeOut(_this2.settings.fadeOutSpeed);
@@ -300,9 +302,6 @@ var Media = function () {
     key: 'show',
     value: function show(asset) {
       // create element
-      if (!asset || !asset.type) {
-        return this.cycle();
-      } // dev
       var elem = this.createElement(asset.type, asset.url);
 
       // append to dom
@@ -323,7 +322,7 @@ var Media = function () {
       }
       clearTimeout(this.cycleTimer);
       var type = this.dict[this.randomKey(0, this.dict.length - 1)];
-      if (this.audioPlaying && type === 'audio') {
+      if (this.audioPlaying && type === 1) {
         return this.cycle();
       }
       var asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)];
@@ -357,7 +356,7 @@ var Media = function () {
   }, {
     key: 'determineProbability',
     value: function determineProbability() {
-      var imageChance = 7;
+      var imageChance = 6;
       var audioChance = 2;
       var videoChance = 2;
 
