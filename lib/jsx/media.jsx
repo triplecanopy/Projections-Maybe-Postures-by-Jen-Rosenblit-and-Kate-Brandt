@@ -275,7 +275,7 @@ class Media {
   }
 
   determineProbability() {
-    const imageChance = 7
+    const imageChance = 6
     const audioChance = 2
     const videoChance = 2
 
