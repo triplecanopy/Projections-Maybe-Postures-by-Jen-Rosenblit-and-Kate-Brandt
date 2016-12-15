@@ -177,13 +177,11 @@ class Media {
         $('.media__button').addClass('pause').removeClass('play').attr('data-play-pause', audioId)
         audio.id = audioId
         audio.addEventListener('canplay', () => {
-          console.log('--- starts')
           audio.play()
           this.audioPlaying = true
           setTimeout(() => this.cycle(), 1000) // delay before restarting cycle after audio starts
         }, false)
         audio.addEventListener('ended', () => {
-          console.log('--- ended')
           $('.media__controls').fadeOut(this.settings.fadeOutSpeed)
           this.audioPlaying = false
           elem.find('.media__container').fadeOut(this.settings.fadeOutSpeed)

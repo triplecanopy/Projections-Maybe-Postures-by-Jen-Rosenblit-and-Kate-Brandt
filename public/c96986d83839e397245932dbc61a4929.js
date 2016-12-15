@@ -230,7 +230,6 @@ var Media = function () {
         (0, _jquery2.default)('.media__button').addClass('pause').removeClass('play').attr('data-play-pause', audioId);
         audio.id = audioId;
         audio.addEventListener('canplay', function () {
-          console.log('--- starts');
           audio.play();
           _this2.audioPlaying = true;
           setTimeout(function () {
@@ -238,7 +237,6 @@ var Media = function () {
           }, 1000); // delay before restarting cycle after audio starts
         }, false);
         audio.addEventListener('ended', function () {
-          console.log('--- ended');
           (0, _jquery2.default)('.media__controls').fadeOut(_this2.settings.fadeOutSpeed);
           _this2.audioPlaying = false;
           elem.find('.media__container').fadeOut(_this2.settings.fadeOutSpeed);
