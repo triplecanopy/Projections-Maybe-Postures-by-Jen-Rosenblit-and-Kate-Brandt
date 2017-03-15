@@ -43,3 +43,10 @@ $ npm start
 ```
 $ gulp build
 ```
+
+## Deploy
+
+```
+$ git push heroku master
+```
+
