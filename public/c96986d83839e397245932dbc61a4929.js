@@ -77,7 +77,7 @@ var Media = function () {
       fadeToOpacity: 0.1, // float / int
       fadeInSpeed: 100, // int
       fadeOutSpeed: function fadeOutSpeed() {
-        var min = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 3000;
+        var min = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 2000;
         var max = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4500;
         return (// func
           Math.random() * (max - min) + min
@@ -358,13 +358,9 @@ var Media = function () {
   }, {
     key: 'determineProbability',
     value: function determineProbability() {
-      var imageChance = 5;
-      var audioChance = 5;
-      var videoChance = 0;
-
-      // const imageChance = 6
-      // const audioChance = 2
-      // const videoChance = 2
+      var imageChance = 6;
+      var audioChance = 2;
+      var videoChance = 2;
 
       for (var i = 0; i < imageChance; i += 1) {
         this.dict.push(0);
