@@ -10,7 +10,7 @@ class Media {
     this.settings = {
       fadeToOpacity: 0.1,                                 // float / int
       fadeInSpeed: 100,                                   // int
-      fadeOutSpeed: (min = 3000, max = 4500) =>          // func
+      fadeOutSpeed: (min = 2000, max = 4500) =>          // func
         Math.random() * (max - min) + min,
       cycleSpeed: 3000,                                   // int
       overlapTime: 1500,                                  // int
@@ -278,13 +278,9 @@ class Media {
   }
 
   determineProbability() {
-    const imageChance = 5
-    const audioChance = 5
-    const videoChance = 0
-
-    // const imageChance = 6
-    // const audioChance = 2
-    // const videoChance = 2
+    const imageChance = 6
+    const audioChance = 2
+    const videoChance = 2
 
     for (let i = 0; i < imageChance; i += 1) { this.dict.push(0) }
     for (let i = 0; i < audioChance; i += 1) { this.dict.push(1) }

@@ -19,7 +19,11 @@ Two commands should be run in two separate console windows:
 $ gulp serve
 ```
 
-If you get an error like the following
+```
+$ npm start
+```
+
+If you get an error like the following after running `gulp serve`
 
 ```
 rosenblit (master) % gulp serve
@@ -32,10 +36,6 @@ You'll need to rebuild `gulp-sass`:
 
 ```bash
 $ npm rebuild node-sass
-```
-
-```
-$ npm start
 ```
 
 ## Build
