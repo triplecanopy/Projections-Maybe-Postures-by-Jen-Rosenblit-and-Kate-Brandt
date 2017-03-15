@@ -67,15 +67,22 @@ var _jquery2 = _interopRequireDefault(_jquery);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Media = function () {
-  function Media(options) {
+  function Media() {
     var _this2 = this;
 
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     (0, _classCallCheck3.default)(this, Media);
 
     this.settings = {
       fadeToOpacity: 0.1, // float / int
       fadeInSpeed: 100, // int
-      fadeOutSpeed: 3000, // int
+      fadeOutSpeed: function fadeOutSpeed() {
+        var min = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 3000;
+        var max = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4500;
+        return (// func
+          Math.random() * (max - min) + min
+        );
+      },
       cycleSpeed: 3000, // int
       overlapTime: 1500, // int
       offsetBottom: 300, // int
@@ -97,11 +104,15 @@ var Media = function () {
       return typeof s === 'string';
     };
 
+    this.isFunction = function isFunction(f) {
+      return f && typeof f === 'function';
+    };
+
     this.validateSettings = function validateSettings() {
       if (window.location.href.match(/localhost/) === null) {
         return true;
       }
-      return Boolean((this.isFloat(this.settings.fadeToOpacity) || this.isInteger(this.settings.fadeToOpacity)) && this.isInteger(this.settings.fadeInSpeed) && this.isInteger(this.settings.fadeOutSpeed) && this.isInteger(this.settings.cycleSpeed) && this.isInteger(this.settings.overlapTime) && this.isInteger(this.settings.columns) && (this.isFloat(this.settings.gutter) || this.isInteger(this.settings.gutter)) && this.isString(this.settings.selector) && this.isString(this.settings.introSelector));
+      return Boolean((this.isFloat(this.settings.fadeToOpacity) || this.isInteger(this.settings.fadeToOpacity)) && this.isInteger(this.settings.fadeInSpeed) && this.isFunction(this.settings.fadeOutSpeed) && this.isInteger(this.settings.cycleSpeed) && this.isInteger(this.settings.overlapTime) && this.isInteger(this.settings.columns) && (this.isFloat(this.settings.gutter) || this.isInteger(this.settings.gutter)) && this.isString(this.settings.selector) && this.isString(this.settings.introSelector));
     };
 
     this.randomKey = function randomKey(min, max) {
@@ -179,7 +190,7 @@ var Media = function () {
     };
     this.fadeTo = function fadeTo(elem, callback) {
       var css = { opacity: this.settings.fadeToOpacity };
-      (0, _jquery2.default)(elem).animate(css, this.settings.fadeOutSpeed, callback);
+      (0, _jquery2.default)(elem).animate(css, this.settings.fadeOutSpeed(), callback);
     };
     this.decay = {
       image: function image(elem) {
@@ -187,9 +198,7 @@ var Media = function () {
         _this2.decayTimer = setTimeout(function decayTimerSet(_this) {
           return function decayTimerDone() {
             clearTimeout(_this.decayTimer);
-            _this.fadeTo(elem.find('.media__container'), function () {
-              return _this.noop();
-            });
+            _this.fadeTo(elem.find('.media__container'), _this.noop);
           };
         }(_this2), _this2.settings.cycleSpeed);
         _this2.appendTimer = setTimeout(function appendTimerSet(_this) {
@@ -197,7 +206,7 @@ var Media = function () {
             clearTimeout(_this.appendTimer);
             _this.cycle();
           };
-        }(_this2), _this2.settings.cycleSpeed + _this2.settings.fadeOutSpeed - _this2.settings.overlapTime);
+        }(_this2), _this2.settings.cycleSpeed + _this2.settings.fadeOutSpeed() - _this2.settings.overlapTime);
         return _this2.decayTimer;
       },
       video: function video(elem) {
@@ -205,22 +214,14 @@ var Media = function () {
         video.muted = true;
         video.addEventListener('canplay', function () {
           video.play();
-        }, false);
-
-        var videoTimeupdateCallback = function videoTimeupdateCallback() {
-          var current = Math.round((video.duration - video.currentTime) * 1000);
-          if (current <= _this2.settings.overlapTime) {
-            setTimeout(function () {
-              _this2.cycle();
-            }, _this2.settings.fadeOutSpeed);
-            video.removeEventListener('timeupdate', videoTimeupdateCallback);
-          }
-        };
-        video.addEventListener('timeupdate', videoTimeupdateCallback, false);
-        video.addEventListener('ended', function () {
-          _this2.fadeTo(elem.find('.media__container'), function () {
-            return _this2.noop();
-          });
+          var videoFadeOutTime = video.duration * 1000 - _this2.settings.fadeOutSpeed();
+          _this2.decayTimer = setTimeout(function decayTimerSet(_this) {
+            return function decayTimerDone() {
+              clearTimeout(_this.decayTimer);
+              _this.fadeTo(elem.find('.media__container'), _this.noop);
+              _this.cycle();
+            };
+          }(_this2), videoFadeOutTime);
         }, false);
       },
       audio: function audio(elem) {
@@ -237,9 +238,9 @@ var Media = function () {
           }, 1000); // delay before restarting cycle after audio starts
         }, false);
         audio.addEventListener('ended', function () {
-          (0, _jquery2.default)('.media__controls').fadeOut(_this2.settings.fadeOutSpeed);
+          (0, _jquery2.default)('.media__controls').fadeOut(_this2.settings.fadeOutSpeed());
           _this2.audioPlaying = false;
-          elem.find('.media__container').fadeOut(_this2.settings.fadeOutSpeed);
+          elem.find('.media__container').fadeOut(_this2.settings.fadeOutSpeed());
         }, false);
       }
     };
@@ -293,7 +294,7 @@ var Media = function () {
   }, {
     key: 'createElement',
     value: function createElement(type, url) {
-      var str = this.models[type].replace(/ASSET_URL/, url);
+      var str = this.models[type].replace(/ASSET_URL/g, url);
       return (0, _jquery2.default)(str);
     }
   }, {
@@ -344,7 +345,10 @@ var Media = function () {
             }
           };
           img.onerror = function () {
-            reject('Error loading image: ' + image);
+            // remove 404 image from our assets and `resolve` so we don't mess up
+            // the promise chain
+            _this4.assets[0].splice(i, 1);
+            resolve();
           };
           img.src = image.url + '.jpg';
           return img;
@@ -354,9 +358,13 @@ var Media = function () {
   }, {
     key: 'determineProbability',
     value: function determineProbability() {
-      var imageChance = 6;
-      var audioChance = 2;
-      var videoChance = 2;
+      var imageChance = 5;
+      var audioChance = 5;
+      var videoChance = 0;
+
+      // const imageChance = 6
+      // const audioChance = 2
+      // const videoChance = 2
 
       for (var i = 0; i < imageChance; i += 1) {
         this.dict.push(0);

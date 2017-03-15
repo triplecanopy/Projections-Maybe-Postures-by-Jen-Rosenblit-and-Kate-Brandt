@@ -6,18 +6,19 @@
 import $ from 'jquery'
 
 class Media {
-  constructor(options) {
+  constructor(options = {}) {
     this.settings = {
-      fadeToOpacity: 0.1,           // float / int
-      fadeInSpeed: 100,             // int
-      fadeOutSpeed: 3000,           // int
-      cycleSpeed: 3000,             // int
-      overlapTime: 1500,            // int
-      offsetBottom: 300,            // int
-      columns: 18,                  // int
-      gutter: 2.47469,              // float / int
-      selector: 'main',             // string
-      introSelector: '.container'   // string
+      fadeToOpacity: 0.1,                                 // float / int
+      fadeInSpeed: 100,                                   // int
+      fadeOutSpeed: (min = 3000, max = 4500) =>          // func
+        Math.random() * (max - min) + min,
+      cycleSpeed: 3000,                                   // int
+      overlapTime: 1500,                                  // int
+      offsetBottom: 300,                                  // int
+      columns: 18,                                        // int
+      gutter: 2.47469,                                    // float / int
+      selector: 'main',                                   // string
+      introSelector: '.container'                         // string
     }
 
     this.isInteger = function isInteger(n) {
@@ -32,12 +33,16 @@ class Media {
       return typeof s === 'string'
     }
 
+    this.isFunction = function isFunction(f) {
+      return f && typeof f === 'function'
+    }
+
     this.validateSettings = function validateSettings() {
       if (window.location.href.match(/localhost/) === null) { return true }
       return Boolean(
         (this.isFloat(this.settings.fadeToOpacity) || this.isInteger(this.settings.fadeToOpacity))
         && this.isInteger(this.settings.fadeInSpeed)
-        && this.isInteger(this.settings.fadeOutSpeed)
+        && this.isFunction(this.settings.fadeOutSpeed)
         && this.isInteger(this.settings.cycleSpeed)
         && this.isInteger(this.settings.overlapTime)
         && this.isInteger(this.settings.columns)
@@ -130,7 +135,7 @@ class Media {
     }
     this.fadeTo = function fadeTo(elem, callback) {
       const css = { opacity: this.settings.fadeToOpacity }
-      $(elem).animate(css, this.settings.fadeOutSpeed, callback)
+      $(elem).animate(css, this.settings.fadeOutSpeed(), callback)
     }
     this.decay = {
       image: (elem) => {
@@ -138,7 +143,7 @@ class Media {
         this.decayTimer = setTimeout((function decayTimerSet(_this) {
           return function decayTimerDone() {
             clearTimeout(_this.decayTimer)
-            _this.fadeTo(elem.find('.media__container'), () => _this.noop())
+            _this.fadeTo(elem.find('.media__container'), _this.noop)
           }
         }(this)), this.settings.cycleSpeed)
         this.appendTimer = setTimeout((function appendTimerSet(_this) {
@@ -146,7 +151,7 @@ class Media {
             clearTimeout(_this.appendTimer)
             _this.cycle()
           }
-        }(this)), this.settings.cycleSpeed + this.settings.fadeOutSpeed - this.settings.overlapTime)
+        }(this)), this.settings.cycleSpeed + this.settings.fadeOutSpeed() - this.settings.overlapTime)
         return this.decayTimer
       },
       video: (elem) => {
@@ -154,20 +159,14 @@ class Media {
         video.muted = true
         video.addEventListener('canplay', () => {
           video.play()
-        }, false)
-
-        const videoTimeupdateCallback = () => {
-          const current = Math.round((video.duration - video.currentTime) * 1000)
-          if (current <= this.settings.overlapTime) {
-            setTimeout(() => {
-              this.cycle()
-            }, this.settings.fadeOutSpeed)
-            video.removeEventListener('timeupdate', videoTimeupdateCallback)
-          }
-        }
-        video.addEventListener('timeupdate', videoTimeupdateCallback, false)
-        video.addEventListener('ended', () => {
-          this.fadeTo(elem.find('.media__container'), () => this.noop())
+          const videoFadeOutTime = (video.duration * 1000) - this.settings.fadeOutSpeed()
+          this.decayTimer = setTimeout((function decayTimerSet(_this) {
+            return function decayTimerDone() {
+              clearTimeout(_this.decayTimer)
+              _this.fadeTo(elem.find('.media__container'), _this.noop)
+              _this.cycle()
+            }
+          }(this)), videoFadeOutTime)
         }, false)
       },
       audio: (elem) => {
@@ -182,9 +181,9 @@ class Media {
           setTimeout(() => this.cycle(), 1000) // delay before restarting cycle after audio starts
         }, false)
         audio.addEventListener('ended', () => {
-          $('.media__controls').fadeOut(this.settings.fadeOutSpeed)
+          $('.media__controls').fadeOut(this.settings.fadeOutSpeed())
           this.audioPlaying = false
-          elem.find('.media__container').fadeOut(this.settings.fadeOutSpeed)
+          elem.find('.media__container').fadeOut(this.settings.fadeOutSpeed())
         }, false)
       }
     }
@@ -231,7 +230,7 @@ class Media {
   }
 
   createElement(type, url) {
-    const str = this.models[type].replace(/ASSET_URL/, url)
+    const str = this.models[type].replace(/ASSET_URL/g, url)
     return $(str)
   }
 
@@ -266,7 +265,12 @@ class Media {
         img.onload = () => {
           if (i === images.length - 1) { resolve() }
         }
-        img.onerror = () => { reject(`Error loading image: ${image}`) }
+        img.onerror = () => {
+          // remove 404 image from our assets and `resolve` so we don't mess up
+          // the promise chain
+          this.assets[0].splice(i, 1)
+          resolve()
+        }
         img.src = `${image.url}.jpg`
         return img
       })
@@ -274,9 +278,13 @@ class Media {
   }
 
   determineProbability() {
-    const imageChance = 6
-    const audioChance = 2
-    const videoChance = 2
+    const imageChance = 5
+    const audioChance = 5
+    const videoChance = 0
+
+    // const imageChance = 6
+    // const audioChance = 2
+    // const videoChance = 2
 
     for (let i = 0; i < imageChance; i += 1) { this.dict.push(0) }
     for (let i = 0; i < audioChance; i += 1) { this.dict.push(1) }
@@ -348,7 +356,7 @@ class Media {
       )
     }
     $(window).scrollTop(0)
-    setTimeout(function() { $('body').addClass('ready') }, 0)
+    setTimeout(() => { $('body').addClass('ready') }, 0)
     return this.cycle()
   }
 }

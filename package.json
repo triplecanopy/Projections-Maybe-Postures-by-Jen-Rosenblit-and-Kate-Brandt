@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "description": "Whitecubes with Node.js and Express 4",
   "engines": {
-    "node": "5.9.1"
+    "node": ">=5.9.1"
   },
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "./node_modules/.bin/nodemon index.js",
     "ava": "ava --verbose || true",
     "lint": "./node_modules/.bin/eslint ./lib/jsx/*.jsx || true",
     "test": "npm run ava && npm run lint"
@@ -45,6 +45,7 @@
     "gulp-cssnano": "^2.1.2",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.2",
-    "gulp-uglify": "^2.0.0"
+    "gulp-uglify": "^2.0.0",
+    "nodemon": "^1.11.0"
   }
 }

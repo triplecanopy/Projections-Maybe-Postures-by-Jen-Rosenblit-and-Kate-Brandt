@@ -19,6 +19,21 @@ Two commands should be run in two separate console windows:
 $ gulp serve
 ```
 
+If you get an error like the following
+
+```
+rosenblit (master) % gulp serve
+/<path to dir>/node_modules/node-sass/lib/binding.js:15
+      throw new Error(errors.missingBinary());
+      ^
+```
+
+You'll need to rebuild `gulp-sass`:
+
+```bash
+$ npm rebuild node-sass
+```
+
 ```
 $ npm start
 ```
