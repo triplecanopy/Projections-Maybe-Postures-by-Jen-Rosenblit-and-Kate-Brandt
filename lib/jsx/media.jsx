@@ -10,8 +10,9 @@ class Media {
     this.settings = {
       fadeToOpacity: 0.1,                                 // float / int
       fadeInSpeed: 100,                                   // int
-      fadeOutSpeed: (min = 2000, max = 4500) =>          // func
+      fadeOutSpeed: (min = 2000, max = 4500) =>           // func
         Math.random() * (max - min) + min,
+      minFadeOutTime: 600,                                // int
       cycleSpeed: 3000,                                   // int
       overlapTime: 1500,                                  // int
       offsetBottom: 300,                                  // int
@@ -43,6 +44,7 @@ class Media {
         (this.isFloat(this.settings.fadeToOpacity) || this.isInteger(this.settings.fadeToOpacity))
         && this.isInteger(this.settings.fadeInSpeed)
         && this.isFunction(this.settings.fadeOutSpeed)
+        && this.isInteger(this.settings.minFadeOutTime)
         && this.isInteger(this.settings.cycleSpeed)
         && this.isInteger(this.settings.overlapTime)
         && this.isInteger(this.settings.columns)
@@ -159,7 +161,11 @@ class Media {
         video.muted = true
         video.addEventListener('canplay', () => {
           video.play()
-          const videoFadeOutTime = (video.duration * 1000) - this.settings.fadeOutSpeed()
+          let videoFadeOutTime
+          videoFadeOutTime = (video.duration * 1000) - this.settings.fadeOutSpeed()
+          if (videoFadeOutTime < this.settings.minFadeOutTime) {
+            videoFadeOutTime = this.settings.minFadeOutTime
+          }
           this.decayTimer = setTimeout((function decayTimerSet(_this) {
             return function decayTimerDone() {
               clearTimeout(_this.decayTimer)

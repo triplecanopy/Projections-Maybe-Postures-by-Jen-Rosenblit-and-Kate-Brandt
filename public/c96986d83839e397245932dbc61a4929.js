@@ -83,6 +83,7 @@ var Media = function () {
           Math.random() * (max - min) + min
         );
       },
+      minFadeOutTime: 600, // int
       cycleSpeed: 3000, // int
       overlapTime: 1500, // int
       offsetBottom: 300, // int
@@ -112,7 +113,7 @@ var Media = function () {
       if (window.location.href.match(/localhost/) === null) {
         return true;
       }
-      return Boolean((this.isFloat(this.settings.fadeToOpacity) || this.isInteger(this.settings.fadeToOpacity)) && this.isInteger(this.settings.fadeInSpeed) && this.isFunction(this.settings.fadeOutSpeed) && this.isInteger(this.settings.cycleSpeed) && this.isInteger(this.settings.overlapTime) && this.isInteger(this.settings.columns) && (this.isFloat(this.settings.gutter) || this.isInteger(this.settings.gutter)) && this.isString(this.settings.selector) && this.isString(this.settings.introSelector));
+      return Boolean((this.isFloat(this.settings.fadeToOpacity) || this.isInteger(this.settings.fadeToOpacity)) && this.isInteger(this.settings.fadeInSpeed) && this.isFunction(this.settings.fadeOutSpeed) && this.isInteger(this.settings.minFadeOutTime) && this.isInteger(this.settings.cycleSpeed) && this.isInteger(this.settings.overlapTime) && this.isInteger(this.settings.columns) && (this.isFloat(this.settings.gutter) || this.isInteger(this.settings.gutter)) && this.isString(this.settings.selector) && this.isString(this.settings.introSelector));
     };
 
     this.randomKey = function randomKey(min, max) {
@@ -214,7 +215,11 @@ var Media = function () {
         video.muted = true;
         video.addEventListener('canplay', function () {
           video.play();
-          var videoFadeOutTime = video.duration * 1000 - _this2.settings.fadeOutSpeed();
+          var videoFadeOutTime = void 0;
+          videoFadeOutTime = video.duration * 1000 - _this2.settings.fadeOutSpeed();
+          if (videoFadeOutTime < _this2.settings.minFadeOutTime) {
+            videoFadeOutTime = _this2.settings.minFadeOutTime;
+          }
           _this2.decayTimer = setTimeout(function decayTimerSet(_this) {
             return function decayTimerDone() {
               clearTimeout(_this.decayTimer);
