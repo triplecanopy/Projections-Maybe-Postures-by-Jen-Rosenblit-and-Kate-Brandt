@@ -32,7 +32,7 @@ rosenblit (master) % gulp serve
       ^
 ```
 
-You'll need to rebuild `gulp-sass`:
+You'll need to rebuild `node-sass`:
 
 ```bash
 $ npm rebuild node-sass
