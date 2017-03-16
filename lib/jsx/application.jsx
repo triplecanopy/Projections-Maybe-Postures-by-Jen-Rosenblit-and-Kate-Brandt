@@ -13,7 +13,7 @@ $(() => {
   scroller.init()
   media.getAssets()
   .then(resp => media.configure(JSON.parse(resp.body)))
-  .catch(err => console.log(err))
+  .catch(err => console.log(err.message))
   .then(() => media.init())
 
   $(document).on('keyup', (e) => {

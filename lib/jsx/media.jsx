@@ -1,5 +1,5 @@
 
-/* global window:true, Image:true */
+/* global window:true, Image:true, document:true */
 /* eslint-disable no-mixed-operators, operator-linebreak */
 
 
@@ -169,7 +169,17 @@ class Media {
           this.decayTimer = setTimeout((function decayTimerSet(_this) {
             return function decayTimerDone() {
               clearTimeout(_this.decayTimer)
-              _this.fadeTo(elem.find('.media__container'), _this.noop)
+              const videoContainer = elem.find('.media__container')
+              _this.fadeTo(videoContainer, () => {
+
+                // replace videos with images and remove them from the DOM
+                // when they're finished playing
+                _this.replaceVideoElementWithImage(video, videoContainer)
+
+                // remove video to free up memory
+                _this.garbageCollect(video)
+
+              })
               _this.cycle()
             }
           }(this)), videoFadeOutTime)
@@ -189,7 +199,9 @@ class Media {
         audio.addEventListener('ended', () => {
           $('.media__controls').fadeOut(this.settings.fadeOutSpeed())
           this.audioPlaying = false
-          elem.find('.media__container').fadeOut(this.settings.fadeOutSpeed())
+          elem.find('.media__container').fadeOut(this.settings.fadeOutSpeed(), () =>
+            this.garbageCollect(audio)
+          )
         }, false)
       }
     }
@@ -209,6 +221,40 @@ class Media {
   _set(prop, attr) {
     this[prop] = attr
     return 1
+  }
+
+  // memory management
+  replaceVideoElementWithImage(video, container) {
+    // get video dimensions
+    const videoStyles = window.getComputedStyle(video)
+    const vWidth = parseInt(videoStyles.width, 10)
+    const vHeight = parseInt(videoStyles.height, 10)
+
+    // create canvas
+    const canvas = document.createElement('canvas')
+    canvas.width = vWidth
+    canvas.height = vHeight
+
+    // draw video to canvas
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(video, 0, 0, vWidth, vHeight)
+
+    // get URL from canvas
+    const dataURL = canvas.toDataURL('image/jpeg', 1.0)
+
+    container.css({
+      backgroundImage: `url(${dataURL})`,
+      backgroundSize: 'contain',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    })
+
+    // remove canvas
+    this.garbageCollect(canvas)
+  }
+
+  garbageCollect(elem) {
+    $(elem).remove()
   }
 
   dimensions(type) {
@@ -284,6 +330,10 @@ class Media {
   }
 
   determineProbability() {
+    // const imageChance = 2
+    // const audioChance = 0
+    // const videoChance = 8
+
     const imageChance = 6
     const audioChance = 2
     const videoChance = 2

@@ -23,7 +23,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   media.getAssets().then(function (resp) {
     return media.configure(JSON.parse(resp.body));
   }).catch(function (err) {
-    return console.log(err);
+    return console.log(err.message);
   }).then(function () {
     return media.init();
   });
@@ -223,7 +223,16 @@ var Media = function () {
           _this2.decayTimer = setTimeout(function decayTimerSet(_this) {
             return function decayTimerDone() {
               clearTimeout(_this.decayTimer);
-              _this.fadeTo(elem.find('.media__container'), _this.noop);
+              var videoContainer = elem.find('.media__container');
+              _this.fadeTo(videoContainer, function () {
+
+                // replace videos with images and remove them from the DOM
+                // when they're finished playing
+                _this.replaceVideoElementWithImage(video, videoContainer);
+
+                // remove video to free up memory
+                _this.garbageCollect(video);
+              });
               _this.cycle();
             };
           }(_this2), videoFadeOutTime);
@@ -245,7 +254,9 @@ var Media = function () {
         audio.addEventListener('ended', function () {
           (0, _jquery2.default)('.media__controls').fadeOut(_this2.settings.fadeOutSpeed());
           _this2.audioPlaying = false;
-          elem.find('.media__container').fadeOut(_this2.settings.fadeOutSpeed());
+          elem.find('.media__container').fadeOut(_this2.settings.fadeOutSpeed(), function () {
+            return _this2.garbageCollect(audio);
+          });
         }, false);
       }
     };
@@ -268,6 +279,44 @@ var Media = function () {
     value: function _set(prop, attr) {
       this[prop] = attr;
       return 1;
+    }
+
+    // memory management
+
+  }, {
+    key: 'replaceVideoElementWithImage',
+    value: function replaceVideoElementWithImage(video, container) {
+      // get video dimensions
+      var videoStyles = window.getComputedStyle(video);
+      var vWidth = parseInt(videoStyles.width, 10);
+      var vHeight = parseInt(videoStyles.height, 10);
+
+      // create canvas
+      var canvas = document.createElement('canvas');
+      canvas.width = vWidth;
+      canvas.height = vHeight;
+
+      // draw video to canvas
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, vWidth, vHeight);
+
+      // get URL from canvas
+      var dataURL = canvas.toDataURL('image/jpeg', 1.0);
+
+      container.css({
+        backgroundImage: 'url(' + dataURL + ')',
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      });
+
+      // remove canvas
+      this.garbageCollect(canvas);
+    }
+  }, {
+    key: 'garbageCollect',
+    value: function garbageCollect(elem) {
+      (0, _jquery2.default)(elem).remove();
     }
   }, {
     key: 'dimensions',
@@ -363,6 +412,10 @@ var Media = function () {
   }, {
     key: 'determineProbability',
     value: function determineProbability() {
+      // const imageChance = 2
+      // const audioChance = 0
+      // const videoChance = 8
+
       var imageChance = 6;
       var audioChance = 2;
       var videoChance = 2;
@@ -471,7 +524,7 @@ var Media = function () {
   }]);
   return Media;
 }();
-/* global window:true, Image:true */
+/* global window:true, Image:true, document:true */
 /* eslint-disable no-mixed-operators, operator-linebreak */
 
 exports.default = Media;
