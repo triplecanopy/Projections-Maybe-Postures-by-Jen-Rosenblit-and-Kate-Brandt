@@ -309,23 +309,34 @@ class Media {
   }
 
   preloadImages() {
+    const callbackIfAllImagesLoaded = (idx, len, done) => {
+      if (idx === len) { done() }
+    }
     return new Promise((resolve, reject) => {
       const images = this.assets[0]
       if (!images.length) { return resolve() }
       return images.map((image, i) => {
         const img = new Image()
         img.onload = () => {
-          if (i === images.length - 1) { resolve() }
+          callbackIfAllImagesLoaded(i, images.length - 1, resolve)
         }
         img.onerror = () => {
           // remove 404 image from our assets and `resolve` so we don't mess up
           // the promise chain
           this.assets[0].splice(i, 1)
-          resolve()
+          callbackIfAllImagesLoaded(i, images.length - 1, resolve)
         }
         img.src = `${image.url}.jpg`
         return img
       })
+    })
+  }
+
+  removeLoader() {
+    return new Promise((resolve, reject) => {
+      $('.loader__outer').remove()
+      console.log('removes')
+      resolve()
     })
   }
 
@@ -355,6 +366,7 @@ class Media {
       this.determineProbability()
 
       this.preloadImages()
+      .then(this.removeLoader)
       .catch(err => console.log(err))
       .then(resolve)
     })

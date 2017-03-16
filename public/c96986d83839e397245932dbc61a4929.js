@@ -23,7 +23,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   media.getAssets().then(function (resp) {
     return media.configure(JSON.parse(resp.body));
   }).catch(function (err) {
-    return console.log(err.message);
+    return console.log(err);
   }).then(function () {
     return media.init();
   });
@@ -386,6 +386,11 @@ var Media = function () {
     value: function preloadImages() {
       var _this4 = this;
 
+      var callbackIfAllImagesLoaded = function callbackIfAllImagesLoaded(idx, len, done) {
+        if (idx === len) {
+          done();
+        }
+      };
       return new _promise2.default(function (resolve, reject) {
         var images = _this4.assets[0];
         if (!images.length) {
@@ -394,19 +399,26 @@ var Media = function () {
         return images.map(function (image, i) {
           var img = new Image();
           img.onload = function () {
-            if (i === images.length - 1) {
-              resolve();
-            }
+            callbackIfAllImagesLoaded(i, images.length - 1, resolve);
           };
           img.onerror = function () {
             // remove 404 image from our assets and `resolve` so we don't mess up
             // the promise chain
             _this4.assets[0].splice(i, 1);
-            resolve();
+            callbackIfAllImagesLoaded(i, images.length - 1, resolve);
           };
           img.src = image.url + '.jpg';
           return img;
         });
+      });
+    }
+  }, {
+    key: 'removeLoader',
+    value: function removeLoader() {
+      return new _promise2.default(function (resolve, reject) {
+        (0, _jquery2.default)('.loader__outer').remove();
+        console.log('removes');
+        resolve();
       });
     }
   }, {
@@ -451,7 +463,7 @@ var Media = function () {
         _this5.bindAll();
         _this5.determineProbability();
 
-        _this5.preloadImages().catch(function (err) {
+        _this5.preloadImages().then(_this5.removeLoader).catch(function (err) {
           return console.log(err);
         }).then(resolve);
       });
