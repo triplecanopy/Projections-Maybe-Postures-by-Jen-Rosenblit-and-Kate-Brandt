@@ -35,34 +35,91 @@ body {
   text-align: left;
 }
 
-.intro {
-  @include site-width;
-
-  line-height: 1.45;
-  font-size: 1.75rem;
-  font-family: $TCCrimson;
+.meta {
+  width: auto;
+  height: 2.88rem;
+  position: absolute;
+  left: 17.5%;
+  top: 5.35rem;
 }
+
+.meta *{
+ font-family: $FreeUniversal;
+ display: inline-block;
+ float: left;
+ margin-right: 1.3rem;
+}
+
+.meta .type, .meta .date {
+  margin-top: 1.35rem;
+  font-size: 0.63rem;
+}
+
+.meta .glyph {
+  font-family: $TCGlyphs;
+  font-size: 2.88rem;
+  width: 30px;
+  color: black;
+  -webkit-transition: color 0.15s ease-out;
+  transition: color 0.15s ease-out;
+}
+
+.meta .glyph:hover {
+  color: #5050c5;
+}
+
+.meta .glyph::before {
+  content: "\e023";
+}
+
+.meta .glyph a {
+  width: 30px;
+  height: 50px;
+}
+
+.container {
+  width: 65%;
+  left: 17.5%;
+  top:  19.8rem;
+  position: absolute;
+}
+
 
 .title{
   @include gc16-mono;
-  padding: 2.7rem 0;
-  font-size:2.7rem;
+  font-size:2.1rem;
   line-height: 1.2;
-  text-align: center;
+  text-align: left;
+  display: inline;
 }
 
 .byline{
   @include gc16-mono;
-  margin-top:3rem;
   margin-bottom: 100px;
-  font-size:1.2rem;
+  font-size:2.1rem;
   line-height: 1.2;
-  text-align: center;
+  text-align: left;
+  display: inline;
+  margin-left: 10px;
+}
+
+.byline a {
+  color: black;
+  text-decoration: none;-webkit-transition: color 0.15s ease-out;
+  transition: color 0.15s ease-out;
+}
+
+.byline a:hover {
+  color: #5050c5;
 }
 
 .intro {
-  font-size: 21px;
-  line-height: 27px;
+  @include site-width;
+  margin: 0px;
+  font-size: 1.75rem;
+  line-height: 1.4;
+  font-family: $TCCrimson;
+  display: inline;
 }
 
 .issue-series-link{
@@ -74,3 +131,19 @@ body {
   opacity: 0.4;
   left: 1px;
 }
+
+@include break('mobile'){
+
+.title, .byline {
+  font-size: 1.57rem;
+}
+
+.intro {
+  font-size: 1.5rem;
+}
+
+}
+
+
+
+

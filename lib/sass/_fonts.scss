@@ -75,9 +75,53 @@
   font-style:italic;
 }
 
+// Free Universal
+@font-face{
+  font-family:'FreeUniversal';
+  src:
+    url(/FreeUniversal-Regular.ttf) format('truetype');
+  font-weight:normal;
+  font-style:normal;
+}
+
+@font-face{
+  font-family:'FreeUniversal-Bold';
+  src:
+    url(/FreeUniversal-Bold.ttf) format('truetype');
+  font-weight:Bold;
+  font-style:normal;
+}
+
+@font-face{
+  font-family:'FreeUniversal-Italic';
+  src:
+    url(/FreeUniversal-Italic.ttf) format('truetype');
+  font-weight:normal;
+  font-style:italic;
+}
+
+@font-face{
+  font-family:'FreeUniversal-Bold-Italic';
+  src:
+    url(/FreeUniversal-Bold-Italic.ttf) format('truetype');
+  font-weight:Bold;
+  font-style:italic;
+}
+
+@font-face{
+  font-family:'TCGlyphs';
+  src: url(/TCGlyphs-Regular.otf) format('embedded-opentype');
+  src:
+    url(/TCGlyphs-Regular.ttf) format('truetype');
+  font-weight:normal;
+  font-style:normal;
+}
+
+
 
 // Stacks
 $TCCrimson: "TCCrimson", TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif;
 $FreeUniversal: "FreeUniversal", Futura, "Trebuchet MS", Arial, sans-serif;
 $Archivo: "tcarchivoregular", "Arial Black", "Arial Bold", sans-serif;
 $gc16-mono:"gc16 Mono", monospace;
+$TCGlyphs:"TCGlyphs", monospace;
