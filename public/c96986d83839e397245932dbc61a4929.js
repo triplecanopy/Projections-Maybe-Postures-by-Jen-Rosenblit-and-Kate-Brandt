@@ -344,6 +344,8 @@ var Media = function () {
       var css = { height: d.y, width: d.x, top: p.y, left: p.x };
       this.main.append(elem.attr('data-pos-x', p.rx).css(css));
       elem.find('.media__container').fadeIn(this.settings.fadeSpeed);
+      console.log(elem.attr);
+      //console.log("type:", type, "d:", d, "p:", p, "css:", css)
     }
   }, {
     key: 'createElement',
