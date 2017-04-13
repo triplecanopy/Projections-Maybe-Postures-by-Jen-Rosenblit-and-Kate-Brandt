@@ -266,14 +266,30 @@ var Media = function () {
 
         audio.play();
         _this2.audioPlaying = true;
-        _this2.cycle();
+        setTimeout(function () {
+          return _this2.cycle();
+        }, 100);
+
+        audio.addEventListener('play', function () {
+          (0, _jquery2.default)('.media__button').addClass('pause').removeClass('play');
+          clearTimeout(_this2.unplayedAudioRemovalTimer);
+        });
+
+        audio.addEventListener('pause', function () {
+          (0, _jquery2.default)('.media__button').addClass('play').removeClass('pause');
+          clearTimeout(_this2.unplayedAudioRemovalTimer);
+        });
 
         if (isMobile()) {
-          _this2.unplayedAudioRemovalTimer = setTimeout(removeAudio, _this2.audioRemovalTimer * 1000);
+          _this2.unplayedAudioRemovalTimer = setTimeout(function () {
+            removeAudio();
+          }, _this2.settings.audioRemovalTimer * 1000);
         }
 
         audio.addEventListener('ended', function () {
-          removeAudio();
+          setTimeout(function () {
+            return removeAudio();
+          }, 400);
         }, false);
       }
     };
@@ -393,7 +409,9 @@ var Media = function () {
       clearTimeout(this.cycleTimer);
       var type = this.dict[this.randomKey(0, this.dict.length - 1)];
       if (this.audioPlaying && type === 1) {
-        return this.cycle();
+        return setTimeout(function () {
+          return _this3.cycle();
+        }, 0);
       }
       var asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)];
       return this.show(asset);
@@ -440,9 +458,9 @@ var Media = function () {
   }, {
     key: 'determineProbability',
     value: function determineProbability() {
-      // const imageChance = 2
-      // const audioChance = 0
-      // const videoChance = 8
+      // const imageChance = 6
+      // const audioChance = 2
+      // const videoChance = 2
 
       var imageChance = 2;
       var audioChance = 4;
@@ -511,15 +529,10 @@ var Media = function () {
       var _this7 = this;
 
       (0, _jquery2.default)('.media__button').on('click', function bindAudio() {
-        clearTimeout(this.unplayedAudioRemovalTimer);
         var audio = (0, _jquery2.default)('audio#' + (0, _jquery2.default)(this).attr('data-play-pause'))[0];
         if (audio.paused) {
-          (0, _jquery2.default)(this).addClass('pause');
-          (0, _jquery2.default)(this).removeClass('play');
           audio.play();
         } else {
-          (0, _jquery2.default)(this).removeClass('pause');
-          (0, _jquery2.default)(this).addClass('play');
           audio.pause();
         }
       });

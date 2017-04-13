@@ -208,14 +208,26 @@ class Media {
 
         audio.play()
         this.audioPlaying = true
-        this.cycle()
+        setTimeout(() => this.cycle(), 100)
+
+        audio.addEventListener('play', () => {
+          $('.media__button').addClass('pause').removeClass('play')
+          clearTimeout(this.unplayedAudioRemovalTimer)
+        })
+
+        audio.addEventListener('pause', () => {
+          $('.media__button').addClass('play').removeClass('pause')
+          clearTimeout(this.unplayedAudioRemovalTimer)
+        })
 
         if (isMobile()) {
-          this.unplayedAudioRemovalTimer = setTimeout(removeAudio, this.audioRemovalTimer * 1000)
+          this.unplayedAudioRemovalTimer = setTimeout(() => {
+            removeAudio()
+          }, this.settings.audioRemovalTimer * 1000)
         }
 
         audio.addEventListener('ended', () => {
-          removeAudio()
+          setTimeout(() => removeAudio(), 400)
         }, false)
       }
     }
@@ -317,7 +329,7 @@ class Media {
     }
     clearTimeout(this.cycleTimer)
     const type = this.dict[this.randomKey(0, this.dict.length - 1)]
-    if (this.audioPlaying && type === 1) { return this.cycle() }
+    if (this.audioPlaying && type === 1) { return setTimeout(() => this.cycle(), 0) }
     const asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)]
     return this.show(asset)
   }
@@ -354,9 +366,9 @@ class Media {
   }
 
   determineProbability() {
-    // const imageChance = 2
-    // const audioChance = 0
-    // const videoChance = 8
+    // const imageChance = 6
+    // const audioChance = 2
+    // const videoChance = 2
 
     const imageChance = 2
     const audioChance = 4
@@ -404,15 +416,10 @@ class Media {
 
   bindAll() {
     $('.media__button').on('click', function bindAudio() {
-      clearTimeout(this.unplayedAudioRemovalTimer)
       const audio = $(`audio#${$(this).attr('data-play-pause')}`)[0]
       if (audio.paused) {
-        $(this).addClass('pause')
-        $(this).removeClass('play')
         audio.play()
       } else {
-        $(this).removeClass('pause')
-        $(this).addClass('play')
         audio.pause()
       }
     })
