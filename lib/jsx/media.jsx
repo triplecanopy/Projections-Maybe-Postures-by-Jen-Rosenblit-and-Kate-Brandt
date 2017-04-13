@@ -17,9 +17,9 @@ class Media {
         const max = _max / d
         return Math.random() * (max - min) + min
       },
-      minFadeOutTime: isMobile() ? 600 : 300,
-      cycleSpeed: isMobile() ? 3000 : 1500,
-      overlapTime: isMobile() ? 1500 : 750,
+      minFadeOutTime: isMobile() ? 300 : 600,
+      cycleSpeed: isMobile() ? 1500 : 3000,
+      overlapTime: isMobile() ? 750 : 1500,
       audioRemovalTimer: 5.345, // in seconds
       offsetBottom: 300,
       columns: 18,
@@ -366,13 +366,9 @@ class Media {
   }
 
   determineProbability() {
-    // const imageChance = 6
-    // const audioChance = 2
-    // const videoChance = 2
-
-    const imageChance = 2
-    const audioChance = 4
-    const videoChance = 4
+    const imageChance = 6
+    const audioChance = 2
+    const videoChance = 2
 
     for (let i = 0; i < imageChance; i += 1) { this.dict.push(0) }
     for (let i = 0; i < audioChance; i += 1) { this.dict.push(1) }

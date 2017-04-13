@@ -93,9 +93,9 @@ var Media = function () {
         var max = _max / d;
         return Math.random() * (max - min) + min;
       },
-      minFadeOutTime: isMobile() ? 600 : 300,
-      cycleSpeed: isMobile() ? 3000 : 1500,
-      overlapTime: isMobile() ? 1500 : 750,
+      minFadeOutTime: isMobile() ? 300 : 600,
+      cycleSpeed: isMobile() ? 1500 : 3000,
+      overlapTime: isMobile() ? 750 : 1500,
       audioRemovalTimer: 5.345, // in seconds
       offsetBottom: 300,
       columns: 18,
@@ -458,13 +458,9 @@ var Media = function () {
   }, {
     key: 'determineProbability',
     value: function determineProbability() {
-      // const imageChance = 6
-      // const audioChance = 2
-      // const videoChance = 2
-
-      var imageChance = 2;
-      var audioChance = 4;
-      var videoChance = 4;
+      var imageChance = 6;
+      var audioChance = 2;
+      var videoChance = 2;
 
       for (var i = 0; i < imageChance; i += 1) {
         this.dict.push(0);
