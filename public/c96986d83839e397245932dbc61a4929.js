@@ -66,6 +66,12 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var isMobile = function isMobile() {
+  return 'ontouchstart' in document.documentElement || window.innerWidth <= 680;
+};
+/* global window:true, Image:true, document:true */
+/* eslint-disable no-mixed-operators, operator-linebreak */
+
 var Media = function () {
   function Media() {
     var _this2 = this;
@@ -74,23 +80,28 @@ var Media = function () {
     (0, _classCallCheck3.default)(this, Media);
 
     this.settings = {
-      fadeToOpacity: 0.1, // float / int
-      fadeInSpeed: 100, // int
+      fadeToOpacity: 0.1,
+      fadeInSpeed: 100,
       fadeOutSpeed: function fadeOutSpeed() {
-        var min = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 2000;
-        var max = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4500;
-        return (// func
-          Math.random() * (max - min) + min
-        );
+        var _min = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 2000;
+
+        var _max = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4500;
+
+        // values in ms, divided by 2 if on mobile
+        var d = isMobile() ? 1 : 2;
+        var min = _min / d;
+        var max = _max / d;
+        return Math.random() * (max - min) + min;
       },
-      minFadeOutTime: 600, // int
-      cycleSpeed: 3000, // int
-      overlapTime: 1500, // int
-      offsetBottom: 300, // int
-      columns: 18, // int
-      gutter: 2.47469, // float / int
-      selector: 'main', // string
-      introSelector: '.container' // string
+      minFadeOutTime: isMobile() ? 600 : 300,
+      cycleSpeed: isMobile() ? 3000 : 1500,
+      overlapTime: isMobile() ? 1500 : 750,
+      audioRemovalTimer: 5.345, // in seconds
+      offsetBottom: 300,
+      columns: 18,
+      gutter: 2.47469,
+      selector: 'main',
+      introSelector: '.container'
     };
 
     this.isInteger = function isInteger(n) {
@@ -128,6 +139,7 @@ var Media = function () {
 
     this.noop = function noop() {};
 
+    this.unplayedAudioRemovalTimer = null;
     this.decayTimer = null;
     this.appendTimer = null;
     this.cycleTimer = null;
@@ -186,7 +198,7 @@ var Media = function () {
     };
     this.models = {
       image: '<div class="media media__image">\n        <div class="media__container">\n          <div class="media__container--image" style="background-image:url(/ASSET_URL.jpg)"></div>\n        </div>\n      </div>',
-      video: '<div class="media media__video">\n        <div class="media__container">\n          <div class="media__container--video">\n            <video playsinline webkit-playsinline>\n              <source src="/ASSET_URL.webm" type="video/webm">\n              <source src="/ASSET_URL.mp4" type="video/mp4">\n              <source src="/ASSET_URL.ogv" type="video/ogg">\n          </video>\n          </div>\n        </div>\n      </div>',
+      video: '<div class="media media__video">\n        <div class="media__container">\n          <div class="media__container--video">\n            <video playsinline webkit-playsinline autoplay muted>\n              <source src="/ASSET_URL.mp4" type="video/mp4">\n              <source src="/ASSET_URL.webm" type="video/webm">\n              <source src="/ASSET_URL.ogv" type="video/ogg">\n          </video>\n          </div>\n        </div>\n      </div>',
       audio: '<div class="media media__audio">\n        <div class="media__container">\n          <div class="media__container--audio">\n            <audio>\n               <source src="/ASSET_URL.ogg">\n               <source src="/ASSET_URL.mp3">\n            </audio>\n          </div>\n        </div>\n      </div>'
     };
     this.fadeTo = function fadeTo(elem, callback) {
@@ -212,9 +224,7 @@ var Media = function () {
       },
       video: function video(elem) {
         var video = elem.find('video')[0];
-        video.muted = true;
         video.addEventListener('canplay', function () {
-          video.play();
           var videoFadeOutTime = void 0;
           videoFadeOutTime = video.duration * 1000 - _this2.settings.fadeOutSpeed();
           if (videoFadeOutTime < _this2.settings.minFadeOutTime) {
@@ -241,22 +251,30 @@ var Media = function () {
       audio: function audio(elem) {
         var audio = elem.find('audio')[0];
         var audioId = '_' + Math.round(Math.random() * 1000000);
-        (0, _jquery2.default)('.media__controls').fadeIn(_this2.settings.fadeInSpeed);
-        (0, _jquery2.default)('.media__button').addClass('pause').removeClass('play').attr('data-play-pause', audioId);
         audio.id = audioId;
-        audio.addEventListener('canplay', function () {
-          audio.play();
-          _this2.audioPlaying = true;
-          setTimeout(function () {
-            return _this2.cycle();
-          }, 1000); // delay before restarting cycle after audio starts
-        }, false);
-        audio.addEventListener('ended', function () {
+
+        var removeAudio = function removeAudio() {
           (0, _jquery2.default)('.media__controls').fadeOut(_this2.settings.fadeOutSpeed());
+          console.log(_this2);
           _this2.audioPlaying = false;
           elem.find('.media__container').fadeOut(_this2.settings.fadeOutSpeed(), function () {
             return _this2.garbageCollect(audio);
           });
+        };
+
+        (0, _jquery2.default)('.media__controls').fadeIn(_this2.settings.fadeInSpeed);
+        (0, _jquery2.default)('.media__button').attr('data-play-pause', audioId);
+
+        audio.play();
+        _this2.audioPlaying = true;
+        _this2.cycle();
+
+        if (isMobile()) {
+          _this2.unplayedAudioRemovalTimer = setTimeout(removeAudio, _this2.audioRemovalTimer * 1000);
+        }
+
+        audio.addEventListener('ended', function () {
+          removeAudio();
         }, false);
       }
     };
@@ -417,7 +435,6 @@ var Media = function () {
     value: function removeLoader() {
       return new _promise2.default(function (resolve, reject) {
         (0, _jquery2.default)('.loader__outer').remove();
-        console.log('removes');
         resolve();
       });
     }
@@ -428,9 +445,9 @@ var Media = function () {
       // const audioChance = 0
       // const videoChance = 8
 
-      var imageChance = 6;
-      var audioChance = 2;
-      var videoChance = 2;
+      var imageChance = 2;
+      var audioChance = 4;
+      var videoChance = 4;
 
       for (var i = 0; i < imageChance; i += 1) {
         this.dict.push(0);
@@ -487,6 +504,13 @@ var Media = function () {
     key: 'onScroll',
     value: function onScroll() {
       this.allowCycle = Boolean((0, _jquery2.default)(window).scrollTop() >= (0, _jquery2.default)(this.settings.introSelector).height() - 50);
+
+      // console.log($(this.settings.introSelector).height())
+      if (this.allowCycle) {
+        console.log('yes');
+      } else {
+        console.log('no');
+      }
     }
   }, {
     key: 'bindAll',
@@ -494,6 +518,7 @@ var Media = function () {
       var _this7 = this;
 
       (0, _jquery2.default)('.media__button').on('click', function bindAudio() {
+        clearTimeout(this.unplayedAudioRemovalTimer);
         var audio = (0, _jquery2.default)('audio#' + (0, _jquery2.default)(this).attr('data-play-pause'))[0];
         if (audio.paused) {
           (0, _jquery2.default)(this).addClass('pause');
@@ -536,8 +561,6 @@ var Media = function () {
   }]);
   return Media;
 }();
-/* global window:true, Image:true, document:true */
-/* eslint-disable no-mixed-operators, operator-linebreak */
 
 exports.default = Media;
 
