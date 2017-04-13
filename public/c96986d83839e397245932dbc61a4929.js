@@ -255,7 +255,6 @@ var Media = function () {
 
         var removeAudio = function removeAudio() {
           (0, _jquery2.default)('.media__controls').fadeOut(_this2.settings.fadeOutSpeed());
-          console.log(_this2);
           _this2.audioPlaying = false;
           elem.find('.media__container').fadeOut(_this2.settings.fadeOutSpeed(), function () {
             return _this2.garbageCollect(audio);
@@ -503,14 +502,8 @@ var Media = function () {
   }, {
     key: 'onScroll',
     value: function onScroll() {
-      this.allowCycle = Boolean((0, _jquery2.default)(window).scrollTop() >= (0, _jquery2.default)(this.settings.introSelector).height() - 50);
-
-      // console.log($(this.settings.introSelector).height())
-      if (this.allowCycle) {
-        console.log('yes');
-      } else {
-        console.log('no');
-      }
+      var elem = (0, _jquery2.default)(this.settings.introSelector);
+      this.allowCycle = Boolean((0, _jquery2.default)(window).scrollTop() >= elem.height() + elem.offset().top - 50);
     }
   }, {
     key: 'bindAll',

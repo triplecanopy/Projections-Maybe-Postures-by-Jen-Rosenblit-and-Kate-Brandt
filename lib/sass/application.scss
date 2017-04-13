@@ -30,11 +30,7 @@ $white: #fff;
 
 html,body { width: 100%; }
 html { min-height: 200%; }
-body {
-  background-color: $white;
-  // opacity: 0;
-  // &.ready { opacity: 1; }
-}
+body { background-color: $white; }
 
 .media {
   position: absolute;
@@ -98,4 +94,10 @@ body {
     &.play:before{ content:'\25B6' }
     &.pause:before{ content:'\2016' }
   }
+}
+
+
+.container {
+  position: relative;
+  top: 100px;
 }
