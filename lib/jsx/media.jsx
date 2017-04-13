@@ -4,7 +4,9 @@
 
 
 import $ from 'jquery'
-const isMobile = () => 'ontouchstart' in document.documentElement || window.innerWidth <= 680
+const MOBILE_SCREEN_WIDTH = 680
+const isMobile = () => window.innerWidth <= MOBILE_SCREEN_WIDTH
+const divisor = () => window.innerWidth <= MOBILE_SCREEN_WIDTH || 2
 
 class Media {
   constructor(options = {}) {
@@ -12,14 +14,14 @@ class Media {
       fadeToOpacity: 0.1,
       fadeInSpeed: 100,
       fadeOutSpeed: (_min = 2000, _max = 4500) => { // values in ms, divided by 2 if on mobile
-        const d = isMobile() ? 1 : 2
+        const d = divisor()
         const min = _min / d
         const max = _max / d
         return Math.random() * (max - min) + min
       },
-      minFadeOutTime: isMobile() ? 300 : 600,
-      cycleSpeed: isMobile() ? 1500 : 3000,
-      overlapTime: isMobile() ? 750 : 1500,
+      minFadeOutTime: 600 / divisor(),
+      cycleSpeed: 3000 / divisor(),
+      overlapTime: 1500 / divisor(),
       audioRemovalTimer: 5.345, // in seconds
       offsetBottom: 300,
       columns: 18,
