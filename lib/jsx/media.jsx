@@ -6,7 +6,7 @@
 import $ from 'jquery'
 const MOBILE_SCREEN_WIDTH = 680
 const isMobile = () => window.innerWidth <= MOBILE_SCREEN_WIDTH
-const divisor = () => window.innerWidth <= MOBILE_SCREEN_WIDTH || 2
+const divisor = () => window.innerWidth <= MOBILE_SCREEN_WIDTH  ? 2 : 1
 
 class Media {
   constructor(options = {}) {
