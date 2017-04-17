@@ -25,7 +25,6 @@ $pad: 32px;
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
   background-color: $white;
   margin: 0;
   font-size: 100%;
@@ -42,10 +41,10 @@ body {
 }
 
 .meta *{
- font-family: $FreeUniversal;
- display: inline-block;
- float: left;
- margin-right: 1.3rem;
+  font-family: $FreeUniversal;
+  display: inline-block;
+  float: left;
+  margin-right: 1.3rem;
 }
 
 .meta .type, .meta .date {
@@ -141,7 +140,4 @@ body {
 }
 
 }
-
-
-
 
