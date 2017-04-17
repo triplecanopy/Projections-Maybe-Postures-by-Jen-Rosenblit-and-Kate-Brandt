@@ -4,22 +4,30 @@
 
 
 import $ from 'jquery'
+const MOBILE_SCREEN_WIDTH = 680
+const isMobile = () => window.innerWidth <= MOBILE_SCREEN_WIDTH
+const divisor = () => window.innerWidth <= MOBILE_SCREEN_WIDTH  ? 2 : 1
 
 class Media {
   constructor(options = {}) {
     this.settings = {
-      fadeToOpacity: 0.1,                                 // float / int
-      fadeInSpeed: 100,                                   // int
-      fadeOutSpeed: (min = 2000, max = 4500) =>           // func
-        Math.random() * (max - min) + min,
-      minFadeOutTime: 600,                                // int
-      cycleSpeed: 3000,                                   // int
-      overlapTime: 1500,                                  // int
-      offsetBottom: 300,                                  // int
-      columns: 18,                                        // int
-      gutter: 2.47469,                                    // float / int
-      selector: 'main',                                   // string
-      introSelector: '.container'                         // string
+      fadeToOpacity: 0.1,
+      fadeInSpeed: 100,
+      fadeOutSpeed: (_min = 2000, _max = 4500) => { // values in ms, divided by 2 if on mobile
+        const d = divisor()
+        const min = _min / d
+        const max = _max / d
+        return Math.random() * (max - min) + min
+      },
+      minFadeOutTime: 600 / divisor(),
+      cycleSpeed: 3000 / divisor(),
+      overlapTime: 1500 / divisor(),
+      audioRemovalTimer: 5.345, // in seconds
+      offsetBottom: 300,
+      columns: 18,
+      gutter: 2.47469,
+      selector: 'main',
+      introSelector: '.container'
     }
 
     this.isInteger = function isInteger(n) {
@@ -64,6 +72,7 @@ class Media {
 
     this.noop = function noop() {}
 
+    this.unplayedAudioRemovalTimer = null
     this.decayTimer = null
     this.appendTimer = null
     this.cycleTimer = null
@@ -116,9 +125,9 @@ class Media {
       video: `<div class="media media__video">
         <div class="media__container">
           <div class="media__container--video">
-            <video playsinline webkit-playsinline>
-              <source src="/ASSET_URL.webm" type="video/webm">
+            <video playsinline webkit-playsinline autoplay muted>
               <source src="/ASSET_URL.mp4" type="video/mp4">
+              <source src="/ASSET_URL.webm" type="video/webm">
               <source src="/ASSET_URL.ogv" type="video/ogg">
           </video>
           </div>
@@ -158,9 +167,7 @@ class Media {
       },
       video: (elem) => {
         const video = elem.find('video')[0]
-        video.muted = true
         video.addEventListener('canplay', () => {
-          video.play()
           let videoFadeOutTime
           videoFadeOutTime = (video.duration * 1000) - this.settings.fadeOutSpeed()
           if (videoFadeOutTime < this.settings.minFadeOutTime) {
@@ -188,20 +195,41 @@ class Media {
       audio: (elem) => {
         const audio = elem.find('audio')[0]
         const audioId = `_${Math.round(Math.random() * 1000000)}`
-        $('.media__controls').fadeIn(this.settings.fadeInSpeed)
-        $('.media__button').addClass('pause').removeClass('play').attr('data-play-pause', audioId)
         audio.id = audioId
-        audio.addEventListener('canplay', () => {
-          audio.play()
-          this.audioPlaying = true
-          setTimeout(() => this.cycle(), 1000) // delay before restarting cycle after audio starts
-        }, false)
-        audio.addEventListener('ended', () => {
+
+        const removeAudio = () => {
           $('.media__controls').fadeOut(this.settings.fadeOutSpeed())
           this.audioPlaying = false
           elem.find('.media__container').fadeOut(this.settings.fadeOutSpeed(), () =>
             this.garbageCollect(audio)
           )
+        }
+
+        $('.media__controls').fadeIn(this.settings.fadeInSpeed)
+        $('.media__button').attr('data-play-pause', audioId)
+
+        audio.play()
+        this.audioPlaying = true
+        setTimeout(() => this.cycle(), 100)
+
+        audio.addEventListener('play', () => {
+          $('.media__button').addClass('pause').removeClass('play')
+          clearTimeout(this.unplayedAudioRemovalTimer)
+        })
+
+        audio.addEventListener('pause', () => {
+          $('.media__button').addClass('play').removeClass('pause')
+          clearTimeout(this.unplayedAudioRemovalTimer)
+        })
+
+        if (isMobile()) {
+          this.unplayedAudioRemovalTimer = setTimeout(() => {
+            removeAudio()
+          }, this.settings.audioRemovalTimer * 1000)
+        }
+
+        audio.addEventListener('ended', () => {
+          setTimeout(() => removeAudio(), 400)
         }, false)
       }
     }
@@ -303,7 +331,7 @@ class Media {
     }
     clearTimeout(this.cycleTimer)
     const type = this.dict[this.randomKey(0, this.dict.length - 1)]
-    if (this.audioPlaying && type === 1) { return this.cycle() }
+    if (this.audioPlaying && type === 1) { return setTimeout(() => this.cycle(), 0) }
     const asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)]
     return this.show(asset)
   }
@@ -335,16 +363,11 @@ class Media {
   removeLoader() {
     return new Promise((resolve, reject) => {
       $('.loader__outer').remove()
-      console.log('removes')
       resolve()
     })
   }
 
   determineProbability() {
-    // const imageChance = 2
-    // const audioChance = 0
-    // const videoChance = 8
-
     const imageChance = 6
     const audioChance = 2
     const videoChance = 2
@@ -385,19 +408,16 @@ class Media {
   }
 
   onScroll() {
-    this.allowCycle = Boolean($(window).scrollTop() >= $(this.settings.introSelector).height() - 50)
+    const elem = $(this.settings.introSelector)
+    this.allowCycle = Boolean($(window).scrollTop() >= elem.height() + elem.offset().top - 50)
   }
 
   bindAll() {
     $('.media__button').on('click', function bindAudio() {
       const audio = $(`audio#${$(this).attr('data-play-pause')}`)[0]
       if (audio.paused) {
-        $(this).addClass('pause')
-        $(this).removeClass('play')
         audio.play()
       } else {
-        $(this).removeClass('pause')
-        $(this).addClass('play')
         audio.pause()
       }
     })

@@ -80,7 +80,7 @@ $small-line-height         : 0.9375rem; // 15px
 @mixin MediumFormatH1 {
   @include block-font;
   font-size: $archivo-h1-font-size;
-  @include at-breakpoint($mobile){
+  @include break('mobile') {
     font-size: 1.6rem;
   }
   font-weight: normal;
