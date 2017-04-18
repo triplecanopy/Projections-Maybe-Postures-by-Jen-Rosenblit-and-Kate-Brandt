@@ -374,13 +374,9 @@ class Media {
   }
 
   determineProbability() {
-    // const imageChance = 6
-    // const audioChance = 2
-    // const videoChance = 2
-
-    const imageChance = 5
-    const audioChance = 5
-    const videoChance = 0
+    const imageChance = 6
+    const audioChance = 2
+    const videoChance = 2
 
     for (let i = 0; i < imageChance; i += 1) { this.dict.push(0) }
     for (let i = 0; i < audioChance; i += 1) { this.dict.push(1) }
