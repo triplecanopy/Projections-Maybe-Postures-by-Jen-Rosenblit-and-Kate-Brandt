@@ -8,7 +8,7 @@ https://young-wildwood-65423.herokuapp.com/
 ## Install
 
 ```
-$ npm i
+$ yarn
 ```
 
 ## Develop
@@ -20,7 +20,7 @@ $ gulp serve
 ```
 
 ```
-$ npm start
+$ yarn start
 ```
 
 If you get an error like the following after running `gulp serve`

@@ -35,6 +35,7 @@ body { background-color: $white; }
 .media {
   position: absolute;
   background-color: transparent;
+  pointer-events: none;
   &__container {
     display: none;
     @include full-height-full-width;

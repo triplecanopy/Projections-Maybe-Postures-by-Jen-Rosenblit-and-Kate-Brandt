@@ -4,6 +4,8 @@
 
 
 import $ from 'jquery'
+import 'setimmediate' // binds to window
+
 const MOBILE_SCREEN_WIDTH = 680
 const isMobile = () => window.innerWidth <= MOBILE_SCREEN_WIDTH
 const divisor = () => window.innerWidth <= MOBILE_SCREEN_WIDTH  ? 2 : 1
@@ -212,7 +214,7 @@ class Media {
 
         audio.play()
         this.audioPlaying = true
-        setTimeout(() => this.cycle(), 100)
+        setImmediate(() => this.cycle())
 
         audio.addEventListener('play', () => {
           $('.media__button').addClass('pause').removeClass('play')
@@ -231,7 +233,7 @@ class Media {
         }
 
         audio.addEventListener('ended', () => {
-          setTimeout(() => removeAudio(), 400)
+          setImmediate(removeAudio)
         }, false)
       }
     }
@@ -328,12 +330,16 @@ class Media {
 
   cycle() {
     if (this.allowCycle === false) {
-      this.cycleTimer = setTimeout(() => this.cycle(), 600)
+      this.cycleTimer = setImmediate(() => this.cycle())
       return this.cycleTimer
     }
-    clearTimeout(this.cycleTimer)
+    clearImmediate(this.cycleTimer)
     const type = this.dict[this.randomKey(0, this.dict.length - 1)]
-    if (this.audioPlaying && type === 1) { return setTimeout(() => this.cycle(), 0) }
+    if (this.audioPlaying && type === 1) {
+      console.log('-- playing audio, re-cycle')
+      return setImmediate(() => this.cycle())
+    }
+    console.log('-- execs')
     const asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)]
     return this.show(asset)
   }
@@ -442,8 +448,11 @@ class Media {
       )
     }
     $(window).scrollTop(0)
-    setTimeout(() => { $('body').addClass('ready') }, 0)
-    return this.cycle()
+
+    setImmediate(() => {
+      $('body').addClass('ready')
+      return this.cycle()
+    })
   }
 }
 
