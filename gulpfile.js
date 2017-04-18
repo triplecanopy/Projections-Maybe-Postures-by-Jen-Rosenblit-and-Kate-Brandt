@@ -11,7 +11,7 @@ var fs = require('fs')
 
 var rev = 'c96986d83839e397245932dbc61a4929'
 
-gulp.task('scripts', function () {
+gulp.task('scripts', function (done) {
   return exec([
     './node_modules/.bin/browserify',
     './lib/jsx/application.jsx -o',
@@ -19,6 +19,7 @@ gulp.task('scripts', function () {
     '[ babelify --presets [ es2015 ] ]'
   ].join(' '), { cwd: './' }, (function(err) {
     if (err) { throw err }
+    done()
   }))
 })
 
@@ -44,9 +45,9 @@ gulp.task('minify', ['styles'], function () {
 })
 
 gulp.task('uglify', ['scripts'], function () {
-  return gulp.src('./public/javascripts/' + rev + '.js')
+  return gulp.src('./public/' + rev + '.js')
   .pipe(uglify())
-  .pipe(gulp.dest('./public/javascripts/'))
+  .pipe(gulp.dest('./public/'))
 })
 
 gulp.task('watch', ['styles', 'scripts'], function () {
