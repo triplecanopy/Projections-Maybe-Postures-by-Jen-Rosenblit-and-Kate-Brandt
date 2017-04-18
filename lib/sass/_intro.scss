@@ -32,11 +32,18 @@ body {
   text-align: left;
 }
 
+header {
+  padding: 0 32px;
+  display: block;
+}
+
 .context {
   width: auto;
-  height: 2.88rem;
-  position: absolute;
-  left: 17.5%;
+  position: relative;
+  max-width: 800px;
+  margin: 40px auto 0;
+  height: 100px;
+  width: 100%;
   margin: 65px auto 0;
 }
 
@@ -44,7 +51,7 @@ body {
   font-family: $FreeUniversal;
   display: inline-block;
   float: left;
-  margin-right: 1.3rem;
+  margin-right: 15px;
 }
 
 .context .type-name, .context .post-date {
@@ -52,11 +59,17 @@ body {
   font-size: 0.63rem;
 }
 
+.context .type-name {
+  margin-right: 20px;
+}
+
 .context .issue-icon {
   font-family: $TCGlyphs;
-  font-size: 2.88rem;
+  font-size: 2.75rem;
   width: 30px;
   color: black;
+  margin-left: 2px;
+  margin-top: 2px;
   -webkit-transition: color 0.15s ease-out;
   transition: color 0.15s ease-out;
 }
@@ -75,10 +88,17 @@ body {
 }
 
 .container {
-  width: 65%;
-  left: 17.5%;
-  top:  18.2rem;
-  position: absolute;
+  padding-top: 95px;
+  margin-top: 0px;
+}
+
+.text-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 32px;
+  border: 0;
+  box-shadow: none;
 }
 
 
@@ -131,11 +151,6 @@ body {
 
 @include break('mobile'){
 
-header {
-  padding: 0 32px;
-  display: block;
-}
-
 .context {
   margin: 25px 0 0;
   position: relative;
@@ -147,11 +162,10 @@ header {
 }
 
 .container {
-  top:  8.3rem;
   position: absolute;
-  padding: 32px;
   width: auto;
   left: 0px;
+  padding-top: 8px;
 }
 
 .title, .byline {

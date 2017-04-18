@@ -16,7 +16,8 @@
     "ejs": "^2.4.1",
     "express": "^4.13.3",
     "gulp": "^3.9.1",
-    "jquery": "^3.1.1"
+    "jquery": "^3.1.1",
+    "setimmediate": "^1.0.5"
   },
   "repository": {
     "type": "git",
