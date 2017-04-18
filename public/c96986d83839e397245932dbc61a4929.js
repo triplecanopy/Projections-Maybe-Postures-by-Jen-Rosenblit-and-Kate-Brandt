@@ -96,6 +96,7 @@ var Media = function () {
         var d = divisor();
         var min = _min / d;
         var max = _max / d;
+        //return (Math.random() * (max - min) + min) / 2 // Mobile 1/2 Speed
         return Math.random() * (max - min) + min;
       },
       minFadeOutTime: 600 / divisor(),

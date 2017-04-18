@@ -17,6 +17,7 @@ class Media {
         const d = divisor()
         const min = _min / d
         const max = _max / d
+        //return (Math.random() * (max - min) + min) / 2 // Mobile 1/2 Speed
         return Math.random() * (max - min) + min
       },
       minFadeOutTime: 600 / divisor(),
@@ -172,6 +173,7 @@ class Media {
           videoFadeOutTime = (video.duration * 1000) - this.settings.fadeOutSpeed()
           if (videoFadeOutTime < this.settings.minFadeOutTime) {
             videoFadeOutTime = this.settings.minFadeOutTime
+
           }
           this.decayTimer = setTimeout((function decayTimerSet(_this) {
             return function decayTimerDone() {
