@@ -8,7 +8,7 @@ import 'setimmediate' // binds to window
 
 const MOBILE_SCREEN_WIDTH = 680
 const isMobile = () => window.innerWidth <= MOBILE_SCREEN_WIDTH
-const divisor = () => window.innerWidth <= MOBILE_SCREEN_WIDTH  ? 2 : 1
+const divisor = () => window.innerWidth <= MOBILE_SCREEN_WIDTH ? 2 : 1 // eslint-disable-line no-confusing-arrow
 
 class Media {
   constructor(options = {}) {
@@ -19,13 +19,16 @@ class Media {
         const d = divisor()
         const min = _min / d
         const max = _max / d
-        //return (Math.random() * (max - min) + min) / 2 // Mobile 1/2 Speed
         return Math.random() * (max - min) + min
       },
       minFadeOutTime: 600 / divisor(),
       cycleSpeed: 3000 / divisor(),
       overlapTime: 1500 / divisor(),
       audioRemovalTimer: 5.345, // in seconds
+      // if cycling disabled (i.e., the user is reading the text and is out of
+      // visible range of the media elements), check every `pollCycleInterval`
+      // to see if we can start cycling media again
+      pollCycleInterval: 500,
       offsetBottom: 300,
       columns: 18,
       gutter: 2.47469,
@@ -165,7 +168,7 @@ class Media {
             clearTimeout(_this.appendTimer)
             _this.cycle()
           }
-        }(this)), this.settings.cycleSpeed + this.settings.fadeOutSpeed() - this.settings.overlapTime)
+        }(this)), this.settings.cycleSpeed + this.settings.fadeOutSpeed() - this.settings.overlapTime) // eslint-disable-line max-len
         return this.decayTimer
       },
       video: (elem) => {
@@ -175,21 +178,18 @@ class Media {
           videoFadeOutTime = (video.duration * 1000) - this.settings.fadeOutSpeed()
           if (videoFadeOutTime < this.settings.minFadeOutTime) {
             videoFadeOutTime = this.settings.minFadeOutTime
-
           }
           this.decayTimer = setTimeout((function decayTimerSet(_this) {
             return function decayTimerDone() {
               clearTimeout(_this.decayTimer)
               const videoContainer = elem.find('.media__container')
               _this.fadeTo(videoContainer, () => {
-
                 // replace videos with images and remove them from the DOM
                 // when they're finished playing
                 _this.replaceVideoElementWithImage(video, videoContainer)
 
                 // remove video to free up memory
                 _this.garbageCollect(video)
-
               })
               _this.cycle()
             }
@@ -287,6 +287,7 @@ class Media {
 
   garbageCollect(elem) {
     $(elem).remove()
+    return this
   }
 
   dimensions(type) {
@@ -330,16 +331,14 @@ class Media {
 
   cycle() {
     if (this.allowCycle === false) {
-      this.cycleTimer = setImmediate(() => this.cycle())
+      this.cycleTimer = setTimeout(() => this.cycle(), this.pollCycleInterval)
       return this.cycleTimer
     }
-    clearImmediate(this.cycleTimer)
+    clearTimeout(this.cycleTimer)
     const type = this.dict[this.randomKey(0, this.dict.length - 1)]
     if (this.audioPlaying && type === 1) {
-      console.log('-- playing audio, re-cycle')
       return setImmediate(() => this.cycle())
     }
-    console.log('-- execs')
     const asset = this.assets[type][this.randomKey(0, this.assets[type].length - 1)]
     return this.show(asset)
   }
@@ -348,7 +347,7 @@ class Media {
     const callbackIfAllImagesLoaded = (idx, len, done) => {
       if (idx === len) { done() }
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve/* , reject */) => {
       const images = this.assets[0]
       if (!images.length) { return resolve() }
       return images.map((image, i) => {
@@ -368,8 +367,8 @@ class Media {
     })
   }
 
-  removeLoader() {
-    return new Promise((resolve, reject) => {
+  removeLoader() { // eslint-disable-line class-methods-use-this
+    return new Promise((resolve/* , reject */) => {
       $('.loader__outer').remove()
       resolve()
     })
@@ -398,7 +397,7 @@ class Media {
 
       this.preloadImages()
       .then(this.removeLoader)
-      .catch(err => console.log(err))
+      .catch(err => console.log(err)) // eslint-disable-line no-console
       .then(resolve)
     })
   }
@@ -448,8 +447,7 @@ class Media {
       )
     }
     $(window).scrollTop(0)
-
-    setImmediate(() => {
+    return setImmediate(() => {
       $('body').addClass('ready')
       return this.cycle()
     })

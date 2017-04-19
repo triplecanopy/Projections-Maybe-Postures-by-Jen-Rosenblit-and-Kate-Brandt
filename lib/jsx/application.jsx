@@ -1,6 +1,6 @@
 
-/* global document:true */
-/* eslint-disable import/extensions */
+/* global document, window */
+/* eslint-disable import/extensions, no-console */
 
 import $ from 'jquery'
 import Media from './media.jsx'
@@ -16,7 +16,11 @@ $(() => {
   .catch(err => console.log(err))
   .then(() => media.init())
 
-  $(document).on('keyup', (e) => {
-    if (e && e.which && e.which === 71) { $('.grid').fadeToggle(0) }
-  })
+  if (/(?:local|heroku)/.test(window.location.host)) {
+    $(document).on('keyup', (e) => {
+      if (e && e.which && e.which === 71) { $('.grid').fadeToggle(0) }
+    })
+  } else {
+    $('.grid').remove()
+  }
 })
