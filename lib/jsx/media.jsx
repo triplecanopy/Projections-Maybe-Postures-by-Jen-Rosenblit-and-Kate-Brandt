@@ -29,7 +29,7 @@ class Media {
       // visible range of the media elements), check every `pollCycleInterval`
       // to see if we can start cycling media again
       pollCycleInterval: 500,
-      offsetBottom: 300,
+      offsetBottom: 300 / divisor(),
       columns: 18,
       gutter: 2.47469,
       selector: 'main',
@@ -224,6 +224,9 @@ class Media {
         audio.addEventListener('pause', () => {
           $('.media__button').addClass('play').removeClass('pause')
           clearTimeout(this.unplayedAudioRemovalTimer)
+          this.unplayedAudioRemovalTimer = setTimeout(() => {
+            removeAudio()
+          }, this.settings.audioRemovalTimer * 1000)
         })
 
         if (isMobile()) {
