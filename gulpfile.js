@@ -14,7 +14,7 @@ var rev = '601fc8b4e73c5e35bc7ec9089d03c805'
 gulp.task('scripts', function (done) {
   return exec([
     './node_modules/.bin/browserify',
-    './lib/jsx/application.jsx -o',
+    './lib/js/application.js -o',
     './public/' + rev + '.js -t',
     '[ babelify --presets [ es2015 ] ]'
   ].join(' '), { cwd: './' }, (function(err) {
@@ -52,7 +52,7 @@ gulp.task('uglify', ['scripts'], function () {
 
 gulp.task('watch', ['styles', 'scripts'], function () {
   gulp.watch(['./lib/sass/*.scss'], ['styles'])
-  gulp.watch(['./lib/jsx/*.jsx'], ['scripts'])
+  gulp.watch(['./lib/js/*.js'], ['scripts'])
 })
 
 gulp.task('clean', function(done) {

@@ -9,7 +9,7 @@
   "scripts": {
     "start": "./node_modules/.bin/nodemon index.js",
     "ava": "ava --verbose || true",
-    "lint": "./node_modules/.bin/eslint ./lib/jsx/*.jsx || true",
+    "lint": "./node_modules/.bin/eslint ./lib/js/*.js || true",
     "test": "npm run ava && npm run lint"
   },
   "dependencies": {
