@@ -73,7 +73,8 @@ class Media {
     }
 
     this.getAssets = function getAssets() {
-      return $.get('/api/media', resp => resp)
+      // return $.get('/api/media', resp => resp)
+      return $.get('manifest.json')
     }
 
     this.noop = function noop() {}

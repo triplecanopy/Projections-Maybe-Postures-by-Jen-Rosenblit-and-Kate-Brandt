@@ -12,7 +12,8 @@ $(() => {
 
   scroller.init()
   media.getAssets()
-  .then(resp => media.configure(JSON.parse(resp.body)))
+  .then(resp => media.configure(resp))
+  // .then(resp => media.configure(JSON.parse(resp.body)))
   .catch(err => console.log(err))
   .then(() => media.init())
 
