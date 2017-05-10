@@ -7,9 +7,9 @@ var gulp = require('gulp')
 var cssmin = require('gulp-cssnano')
 var rename = require('gulp-rename')
 var exec = require('child_process').exec
-var fs = require('fs')
+var fs = require('fs-extra')
 
-var rev = 'c96986d83839e397245932dbc61a4929'
+var rev = '601fc8b4e73c5e35bc7ec9089d03c805'
 
 gulp.task('scripts', function (done) {
   return exec([
@@ -55,14 +55,16 @@ gulp.task('watch', ['styles', 'scripts'], function () {
   gulp.watch(['./lib/jsx/*.jsx'], ['scripts'])
 })
 
-gulp.task('clean', function() {
+gulp.task('clean', function(done) {
   return exec('rm ./*.css ./*.js', { cwd: './public' }, function(err) {
     // if (err) { throw err }
+    done()
   })
 })
 
-gulp.task('build', ['clean', 'sass', 'styles', 'uglify', 'minify'], function () {
-  return console.log('Build succeded!')
+gulp.task('build', ['clean', 'sass', 'styles', 'uglify', 'minify'], function (done) {
+  console.log("\nFinished build")
+  return done()
 })
 
 gulp.task('serve', ['watch'], function () {})
@@ -77,7 +79,7 @@ function guid() {
   return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4()
 }
 
-gulp.task('revision', function() {
+gulp.task('revision', function(done) {
   var prev = rev
   var uuid = guid()
   var regex = new RegExp(rev, 'g')
@@ -85,13 +87,78 @@ gulp.task('revision', function() {
     path.join(__dirname, 'views/pages/index.ejs'),
     path.join(__dirname, 'gulpfile.js')
   ]
-  files.forEach(function(file) {
+  return files.forEach(function(file, i) {
     fs.readFile(file, 'utf8', function(err, data) {
       if (err) { throw err }
       var contents = data.replace(regex, uuid)
       fs.writeFile(file, contents, function(err) {
         if (err) { throw err }
+        if (i === files.length - 1) {
+          done()
+        }
       })
     })
   })
+})
+
+gulp.task('writeManifest', function(done) {
+  var manifestFile = path.join(__dirname, 'dist/manifest.json')
+  var assets = fs.readdirSync(path.join(__dirname, 'public')).filter(function(asset) {
+    return asset.charAt(0) !== '.'
+  })
+  var manifest = assets.map(function(asset) {
+    switch(path.extname(asset)) {
+      case '.jpg':
+        return { type: 'image', url: path.basename(asset, '.jpg') }
+      case '.ogg':
+        return { type: 'audio', url: path.basename(asset, '.ogg') }
+      case '.webm':
+        return { type: 'video', url: path.basename(asset, '.webm') }
+      default:
+        return null
+    }
+  }).filter(Boolean)
+  return fs.writeFile(manifestFile, JSON.stringify(manifest), function(err) {
+    if (err) { throw err }
+    return done()
+  })
+})
+
+gulp.task('copy.dist', function(done) {
+  var distDir = path.join(__dirname, 'dist')
+  var assetsDir = path.join(__dirname, 'public')
+  var appEJS = path.join(__dirname, 'views/pages/index.ejs')
+  var appHTML = path.join(__dirname, 'dist/index.html')
+  return fs.copy(assetsDir, distDir, function(err) {
+    if (err) { throw err }
+      return fs.copy(appEJS, appHTML, function(err) {
+        if (err) { throw err }
+        return done()
+      })
+  })
+})
+
+gulp.task('prepare.dist', function(done) {
+  var dist = path.join(__dirname, 'dist')
+  return fs.remove(dist, function(err) {
+    if (err) { throw err }
+    return fs.mkdirp(dist, function(err) {
+      if (err) { throw err }
+      return done()
+    })
+  })
+})
+
+gulp.task('dist.pre', [/*'revision',*/'prepare.dist', 'build'], function(done) {
+  console.log("\nPre-build succeded")
+  return done()
+})
+
+gulp.task('dist.post', ['copy.dist', 'writeManifest'], function(done) {
+  console.log("\nAll done!")
+})
+
+gulp.task('build.dist', ['dist.pre'], function(done) {
+  gulp.run('dist.post')
+  done()
 })
