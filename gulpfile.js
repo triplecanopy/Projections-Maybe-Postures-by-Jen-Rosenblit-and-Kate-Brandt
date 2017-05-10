@@ -109,11 +109,11 @@ gulp.task('writeManifest', function(done) {
   var manifest = assets.map(function(asset) {
     switch(path.extname(asset)) {
       case '.jpg':
-        return { type: 'image', url: path.basename(asset, '.jpg') }
+        return { type: 'image', url: 'https://s3.amazonaws.com/tc3-whitecube/rosenblit/' + path.basename(asset, '.jpg') }
       case '.ogg':
-        return { type: 'audio', url: path.basename(asset, '.ogg') }
+        return { type: 'audio', url: 'https://s3.amazonaws.com/tc3-whitecube/rosenblit/' + path.basename(asset, '.ogg') }
       case '.webm':
-        return { type: 'video', url: path.basename(asset, '.webm') }
+        return { type: 'video', url: 'https://s3.amazonaws.com/tc3-whitecube/rosenblit/' + path.basename(asset, '.webm') }
       default:
         return null
     }

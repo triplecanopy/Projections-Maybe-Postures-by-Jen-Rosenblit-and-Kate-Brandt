@@ -1,12 +1,12 @@
 
 @font-face{
   font-family:'EntypoRegular';
-  src: url(/entypo.eot);
+  src: url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/entypo.eot);
   src:
-    url(/entypo.eot?#iefix) format('embedded-opentype'),
-    url(/entypo.woff) format('application/x-font-woff'),
-    url(/entypo.ttf) format('truetype'),
-    url(/entypo.svg#EntypoRegular) format('svg');
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/entypo.eot?#iefix) format('embedded-opentype'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/entypo.woff) format('application/x-font-woff'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/entypo.ttf) format('truetype'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/entypo.svg#EntypoRegular) format('svg');
   font-weight:normal;
   font-style:normal;
 }
@@ -14,44 +14,44 @@
 // Crimson
 @font-face{
   font-family:'TCCrimson';
-  src: url(/TC-crimson-roman-webfont.eot);
+  src: url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-roman-webfont.eot);
   src:
-    url(/TC-crimson-roman-webfont.eot?#iefix) format('embedded-opentype'),
-    url(/TC-crimson-roman-webfont.woff) format('application/x-font-woff'),
-    url(/TC-crimson-roman-webfont.ttf) format('truetype');
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-roman-webfont.eot?#iefix) format('embedded-opentype'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-roman-webfont.woff) format('application/x-font-woff'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-roman-webfont.ttf) format('truetype');
   font-weight:normal;
   font-style:normal;
 }
 
 @font-face{
   font-family:'TCCrimson';
-  src: url(/TC-crimson-bold-webfont.eot);
+  src: url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-bold-webfont.eot);
   src:
-    url(/TC-crimson-bold-webfont.eot?#iefix) format('embedded-opentype'),
-    url(/TC-crimson-bold-webfont.woff) format('application/x-font-woff'),
-    url(/TC-crimson-bold-webfont.ttf) format('truetype');
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-bold-webfont.eot?#iefix) format('embedded-opentype'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-bold-webfont.woff) format('application/x-font-woff'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-bold-webfont.ttf) format('truetype');
   font-weight:bold;
   font-style:normal;
 }
 
 @font-face{
   font-family:'TCCrimson';
-  src: url(/TC-crimson-italic-webfont.eot);
+  src: url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-italic-webfont.eot);
   src:
-    url(/TC-crimson-italic-webfont.eot?#iefix) format('embedded-opentype'),
-    url(/TC-crimson-italic-webfont.woff) format('application/x-font-woff'),
-    url(/TC-crimson-italic-webfont.ttf) format('truetype');
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-italic-webfont.eot?#iefix) format('embedded-opentype'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-italic-webfont.woff) format('application/x-font-woff'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-italic-webfont.ttf) format('truetype');
   font-weight:normal;
   font-style:italic;
 }
 
 @font-face{
   font-family:'TCCrimson';
-  src: url(/TC-crimson-bolditalic-webfont.eot);
+  src: url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-bolditalic-webfont.eot);
   src:
-    url(/TC-crimson-bolditalic-webfont.eot?#iefix) format('embedded-opentype'),
-    url(/TC-crimson-bolditalic-webfont.woff) format('application/x-font-woff'),
-    url(/TC-crimson-bolditalic-webfont.ttf) format('truetype');
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-bolditalic-webfont.eot?#iefix) format('embedded-opentype'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-bolditalic-webfont.woff) format('application/x-font-woff'),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TC-crimson-bolditalic-webfont.ttf) format('truetype');
   font-weight:bold;
   font-style:italic;
 }
@@ -60,8 +60,8 @@
 @font-face{
   font-family:'gc16 Mono';
   src:
-    url(/gc16-Mono.woff),
-    url(/gc16-Mono.woff2);
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/gc16-Mono.woff),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/gc16-Mono.woff2);
   font-weight:normal;
   font-style:normal;
 }
@@ -69,8 +69,8 @@
 @font-face{
   font-family:'gc16 Mono';
   src:
-    url(/gc16-MonoItalic.woff),
-    url(/gc16-MonoItalic.woff2);
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/gc16-MonoItalic.woff),
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/gc16-MonoItalic.woff2);
   font-weight:normal;
   font-style:italic;
 }
@@ -79,7 +79,7 @@
 @font-face{
   font-family:'FreeUniversal';
   src:
-    url(/FreeUniversal-Regular.ttf) format('truetype');
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/FreeUniversal-Regular.ttf) format('truetype');
   font-weight:normal;
   font-style:normal;
 }
@@ -87,7 +87,7 @@
 @font-face{
   font-family:'FreeUniversal-Bold';
   src:
-    url(/FreeUniversal-Bold.ttf) format('truetype');
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/FreeUniversal-Bold.ttf) format('truetype');
   font-weight:Bold;
   font-style:normal;
 }
@@ -95,7 +95,7 @@
 @font-face{
   font-family:'FreeUniversal-Italic';
   src:
-    url(/FreeUniversal-Italic.ttf) format('truetype');
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/FreeUniversal-Italic.ttf) format('truetype');
   font-weight:normal;
   font-style:italic;
 }
@@ -103,16 +103,16 @@
 @font-face{
   font-family:'FreeUniversal-Bold-Italic';
   src:
-    url(/FreeUniversal-Bold-Italic.ttf) format('truetype');
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/FreeUniversal-Bold-Italic.ttf) format('truetype');
   font-weight:Bold;
   font-style:italic;
 }
 
 @font-face{
   font-family:'TCGlyphs';
-  src: url(/TCGlyphs-Regular.otf) format('embedded-opentype');
+  src: url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TCGlyphs-Regular.otf) format('embedded-opentype');
   src:
-    url(/TCGlyphs-Regular.ttf) format('truetype');
+    url(https://s3.amazonaws.com/tc3-whitecube/rosenblit/TCGlyphs-Regular.ttf) format('truetype');
   font-weight:normal;
   font-style:normal;
 }

@@ -74,7 +74,7 @@ class Media {
 
     this.getAssets = function getAssets() {
       // return $.get('/api/media', resp => resp)
-      return $.get('manifest.json')
+      return $.get('manifest.json') // DIST
     }
 
     this.noop = function noop() {}
@@ -319,7 +319,7 @@ class Media {
   }
 
   createElement(type, url) {
-    const str = this.models[type].replace(/ASSET_URL/g, url)
+    const str = this.models[type].replace(/\/ASSET_URL/g, url) // DIST
     return $(str)
   }
 
