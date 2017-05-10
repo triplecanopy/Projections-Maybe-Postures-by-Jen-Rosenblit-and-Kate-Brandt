@@ -93,6 +93,15 @@ class Media {
     this.allowCycle = false
 
     this.main = $(this.settings.selector)
+    this.introHeight = function introHeight() {
+      const elem = $(this.settings.introSelector)
+      return elem.height() + elem.offset().top
+    }
+    this.elementMinTop = function elementMinTop() {
+      const top = $(window).scrollTop()
+      if (top < this.introHeight()) { console.log('defaults') }
+      return top < this.introHeight() ? top + this.introHeight() + 30 : top
+    }
     this.positions = {
       image: {
         x: [
@@ -102,7 +111,7 @@ class Media {
           d => $(window).width() - d.x - 30
         ],
         y: [
-          () => $(window).scrollTop() + 30,
+          () => this.elementMinTop(), //$(window).scrollTop() + 30,
           d => $(window).scrollTop() + ($(window).height() / 2) - (d.y / 2),
           d => ($(window).scrollTop() + $(window).height()) - d.y - 30 + this.settings.offsetBottom
         ]
@@ -113,7 +122,7 @@ class Media {
           () => (3 / this.settings.columns) * $(window).width() - 15
         ],
         y: [
-          () => $(window).scrollTop() + 30,
+          () => this.elementMinTop(), //$(window).scrollTop() + 30,
           d => $(window).scrollTop() + ($(window).height() / 2) - (d.y / 2),
           d => ($(window).scrollTop() + $(window).height()) - d.y - 30 + this.settings.offsetBottom
         ]
@@ -320,6 +329,7 @@ class Media {
 
   createElement(type, url) {
     const str = this.models[type].replace(/\/ASSET_URL/g, url) // DIST
+    // const str = this.models[type].replace(/ASSET_URL/g, url)
     return $(str)
   }
 
@@ -420,7 +430,7 @@ class Media {
 
   onScroll() {
     const elem = $(this.settings.introSelector)
-    this.allowCycle = Boolean($(window).scrollTop() >= elem.height() + elem.offset().top - 50)
+    this.allowCycle = Boolean($(window).scrollTop() >= elem.height() + elem.offset().top - 30)
   }
 
   bindAll() {

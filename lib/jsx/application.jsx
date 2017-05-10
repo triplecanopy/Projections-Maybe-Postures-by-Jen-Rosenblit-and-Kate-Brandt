@@ -7,6 +7,8 @@ import Media from './media.jsx'
 import Scroll from './scroll.jsx'
 
 $(() => {
+  $('.grid').remove()
+
   const scroller = new Scroll()
   const media = new Media()
 
@@ -16,12 +18,4 @@ $(() => {
   // .then(resp => media.configure(JSON.parse(resp.body)))
   .catch(err => console.log(err))
   .then(() => media.init())
-
-  if (/(?:local|heroku)/.test(window.location.host)) {
-    $(document).on('keyup', (e) => {
-      if (e && e.which && e.which === 71) { $('.grid').fadeToggle(0) }
-    })
-  } else {
-    $('.grid').remove()
-  }
 })
