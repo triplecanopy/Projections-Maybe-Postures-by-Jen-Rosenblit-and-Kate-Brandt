@@ -1,9 +1,9 @@
 
-# Rosenblit
+# Projections Maybe Postures by Jen Rosenblit and Kate Brandt
 
-## Project Preview
+This is the repository for the digital project, "Projections Maybe Postures," by Jen Rosenblit and Kate Brandt, published in [Issue 23, Vanitas](https://www.canopycanopycanopy.com/issues#23) of Triple Canopy. The project can be found [here](https://www.canopycanopycanopy.com/contents/projections-maybe-postures).
 
-https://young-wildwood-65423.herokuapp.com/
+***
 
 ## Install
 
