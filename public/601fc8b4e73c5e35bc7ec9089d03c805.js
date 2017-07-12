@@ -22,11 +22,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   var media = new _media2.default();
 
   scroller.init();
-  media.getAssets().then(function (resp) {
-    return media.configure(resp);
-  }) // DIST
-  // .then(resp => media.configure(JSON.parse(resp.body)))
-  .catch(function (err) {
+  media.getAssets()
+  // .then(resp => media.configure(resp)) // DIST
+  .then(function (resp) {
+    return media.configure(JSON.parse(resp.body));
+  }).catch(function (err) {
     return console.log(err);
   }).then(function () {
     return media.init();
@@ -147,8 +147,10 @@ var Media = function () {
     };
 
     this.getAssets = function getAssets() {
-      // return $.get('/api/media', resp => resp)
-      return _jquery2.default.get('manifest.json'); // DIST
+      return _jquery2.default.get('/api/media', function (resp) {
+        return resp;
+      });
+      // return $.get('manifest.json') // DIST
     };
 
     this.noop = function noop() {};
@@ -409,8 +411,8 @@ var Media = function () {
   }, {
     key: 'createElement',
     value: function createElement(type, url) {
-      var str = this.models[type].replace(/\/ASSET_URL/g, url); // DIST
-      // const str = this.models[type].replace(/ASSET_URL/g, url)
+      // const str = this.models[type].replace(/\/ASSET_URL/g, url) // DIST
+      var str = this.models[type].replace(/ASSET_URL/g, url);
       return (0, _jquery2.default)(str);
     }
   }, {
