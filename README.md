@@ -16,7 +16,7 @@ $ yarn
 Two commands should be run in two separate console windows:
 
 ```
-$ gulp serve
+$ gulp watch
 ```
 
 ```
