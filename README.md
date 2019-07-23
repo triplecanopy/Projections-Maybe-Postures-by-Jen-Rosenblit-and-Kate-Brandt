@@ -23,10 +23,10 @@ $ gulp watch
 $ yarn start
 ```
 
-If you get an error like the following after running `gulp serve`
+If you get an error like the following after running `gulp watch`
 
 ```
-rosenblit (master) % gulp serve
+rosenblit (master) % gulp watch
 /<path to dir>/node_modules/node-sass/lib/binding.js:15
       throw new Error(errors.missingBinary());
       ^
